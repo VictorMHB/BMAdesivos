@@ -1,9 +1,10 @@
 package com.github.victormhb.bmcrud.repository.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import br.com.caelum.stella.bean.validation.CNPJ;
+import br.com.caelum.stella.bean.validation.CPF;
+import jakarta.persistence.*;
+
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "clientes")
@@ -12,19 +13,26 @@ public class Cliente {
     @Id
     @GeneratedValue
     private Long  id;
-
     private String nome;
-    private String cpf;
+
+    @CPF(message = "CPF inválido")
+    @CNPJ(message = "CNPJ inválido")
+    private String cpfCnpj;
+
     private String email;
     private String telefone;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "endereco_id", referencedColumnName = "id")
+    private Endereco endereco;
 
 
     public Cliente() {}
 
-    public Cliente(String nome, String cpf, String email, String telefone) {
+    public Cliente(String nome, String cpfCnpj, String email, String telefone) {
         this.id = id;
         this.nome = nome;
-        this.cpf = cpf;
+        this.cpfCnpj = cpfCnpj;
         this.email = email;
         this.telefone = telefone;
     }
@@ -45,12 +53,12 @@ public class Cliente {
         this.nome = nome;
     }
 
-    public String getCpf() {
-        return cpf;
+    public String getCpfCnpj() {
+        return cpfCnpj;
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
+    public void setCpfCnpj(String cpfCnpj) {
+        this.cpfCnpj = cpfCnpj;
     }
 
     public String getEmail() {
@@ -67,5 +75,13 @@ public class Cliente {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public Endereco getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
     }
 }
