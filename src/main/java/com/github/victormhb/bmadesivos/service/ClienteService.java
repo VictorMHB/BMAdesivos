@@ -9,10 +9,8 @@ import com.github.victormhb.bmadesivos.entity.Endereco;
 import com.github.victormhb.bmadesivos.repository.ClienteRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
