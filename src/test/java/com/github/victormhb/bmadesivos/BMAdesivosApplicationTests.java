@@ -1,10 +1,10 @@
-package com.github.victormhb.bmcrud;
+package com.github.victormhb.bmadesivos;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BMcrudApplicationTests {
+class BMAdesivosApplicationTests {
 
     @Test
     void contextLoads() {

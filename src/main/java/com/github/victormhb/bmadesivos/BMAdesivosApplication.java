@@ -1,13 +1,13 @@
-package com.github.victormhb.bmcrud;
+package com.github.victormhb.bmadesivos;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BMcrudApplication {
+public class BMAdesivosApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BMcrudApplication.class, args);
+        SpringApplication.run(BMAdesivosApplication.class, args);
     }
 
 }

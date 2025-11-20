@@ -1,4 +1,4 @@
-package com.github.victormhb.bmcrud.repository.entity;
+package com.github.victormhb.bmadesivos.entity;
 
 import jakarta.persistence.*;
 
@@ -28,6 +28,8 @@ public class Endereco {
         this.estado = estado;
         this.cep = cep;
     }
+
+    // GETTERS E SETTERS --------------------
 
     public Long getId() {
         return id;

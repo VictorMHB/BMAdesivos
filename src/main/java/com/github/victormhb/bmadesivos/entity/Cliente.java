@@ -1,13 +1,16 @@
-package com.github.victormhb.bmcrud.repository.entity;
+package com.github.victormhb.bmadesivos.entity;
 
 import br.com.caelum.stella.bean.validation.CNPJ;
 import br.com.caelum.stella.bean.validation.CPF;
 import jakarta.persistence.*;
-
-import javax.validation.constraints.NotNull;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Table(name = "clientes")
+@SQLDelete(sql = "UPDATE clientes SET ativo = false WHERE id = ?")
+@SQLRestriction("ativo = true")
 public class Cliente {
 
     @Id
@@ -26,6 +29,9 @@ public class Cliente {
     @JoinColumn(name = "endereco_id", referencedColumnName = "id")
     private Endereco endereco;
 
+    @Column(name = "ativo")
+    private boolean ativo = true;
+
 
     public Cliente() {}
 
@@ -36,6 +42,8 @@ public class Cliente {
         this.email = email;
         this.telefone = telefone;
     }
+
+    // GETTERS E SETTERS --------------------
 
     public Long getId() {
         return id;
@@ -83,5 +91,13 @@ public class Cliente {
 
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
     }
 }

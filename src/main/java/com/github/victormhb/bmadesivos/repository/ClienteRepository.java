@@ -1,6 +1,6 @@
-package com.github.victormhb.bmcrud.repository;
+package com.github.victormhb.bmadesivos.repository;
 
-import com.github.victormhb.bmcrud.repository.entity.Cliente;
+import com.github.victormhb.bmadesivos.entity.Cliente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

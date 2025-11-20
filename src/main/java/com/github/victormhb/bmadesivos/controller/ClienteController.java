@@ -1,16 +1,19 @@
-package com.github.victormhb.bmcrud.controller;
+package com.github.victormhb.bmadesivos.controller;
 
-import com.github.victormhb.bmcrud.repository.entity.Cliente;
-import com.github.victormhb.bmcrud.service.ClienteService;
+import com.github.victormhb.bmadesivos.entity.Cliente;
+import com.github.victormhb.bmadesivos.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/clientes")
+@CrossOrigin(origins = "*")
 public class ClienteController {
 
     private final ClienteService servico;
@@ -45,6 +48,16 @@ public class ClienteController {
     public ResponseEntity<Cliente> atualizarCliente(@RequestBody Cliente cliente) {
         try {
             Cliente clienteAtualizado = servico.atualizarCliente(cliente);
+            return ResponseEntity.ok(clienteAtualizado); //Retorna 200
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build(); //Retorna 404 Not Found
+        }
+    }
+
+    @PatchMapping("/atualizar/{id}")
+    public ResponseEntity<Cliente> atualizarParcialCliente(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+        try {
+            Cliente clienteAtualizado = servico.atualizarClienteParcial(id, updates);
             return ResponseEntity.ok(clienteAtualizado); //Retorna 200
         } catch (Exception e) {
             return ResponseEntity.notFound().build(); //Retorna 404 Not Found
