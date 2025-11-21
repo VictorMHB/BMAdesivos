@@ -99,6 +99,10 @@ public class ClienteService {
             cliente.setCpfCnpj(novoDoc);
         }
 
+        if (updates.containsKey("ativo")) {
+            cliente.setAtivo((Boolean) updates.get("ativo"));
+        }
+
         if (updates.containsKey("endereco")) {
             Map<String, Object> enderecoMap = (Map<String, Object>) updates.get("endereco");
 
