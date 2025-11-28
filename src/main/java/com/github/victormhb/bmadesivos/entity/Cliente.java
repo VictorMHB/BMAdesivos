@@ -7,10 +7,12 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.Where;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "clientes")
 @SQLDelete(sql = "UPDATE clientes SET ativo = false WHERE id = ?")
-@SQLRestriction("ativo = true")
+//@SQLRestriction("ativo = true")
 public class Cliente {
 
     @Id
@@ -31,7 +33,6 @@ public class Cliente {
 
     @Column(name = "ativo")
     private boolean ativo = true;
-
 
     public Cliente() {}
 

@@ -9,6 +9,7 @@ import com.github.victormhb.bmadesivos.entity.Endereco;
 import com.github.victormhb.bmadesivos.repository.ClienteRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,7 +29,10 @@ public class ClienteService {
     }
 
     public List<Cliente> listar() {
-        return repositorio.findAll();
+        Sort ordenacao = Sort.by(Sort.Direction.DESC, "ativo")
+                .and(Sort.by(Sort.Direction.ASC, "nome"));
+
+        return repositorio.findAll(ordenacao);
     }
 
     public Optional<Cliente> buscarPorId(Long id) {

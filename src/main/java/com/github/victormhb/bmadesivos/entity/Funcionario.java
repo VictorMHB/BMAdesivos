@@ -45,7 +45,6 @@ public class Funcionario implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // você pode retornar roles com base no cargo
         return List.of(() -> "ROLE_" + cargo.name());
     }
 

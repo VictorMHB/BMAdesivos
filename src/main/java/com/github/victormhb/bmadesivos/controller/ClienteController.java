@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -44,7 +43,7 @@ public class ClienteController {
         }
     }
 
-    @PutMapping("atualizar")
+    @PutMapping("editar")
     public ResponseEntity<Cliente> atualizarCliente(@RequestBody Cliente cliente) {
         try {
             Cliente clienteAtualizado = servico.atualizarCliente(cliente);
@@ -54,7 +53,7 @@ public class ClienteController {
         }
     }
 
-    @PatchMapping("/atualizar/{id}")
+    @PatchMapping("/editar/{id}")
     public ResponseEntity<Cliente> atualizarParcialCliente(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
         try {
             Cliente clienteAtualizado = servico.atualizarClienteParcial(id, updates);
