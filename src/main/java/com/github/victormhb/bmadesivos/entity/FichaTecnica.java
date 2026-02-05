@@ -21,7 +21,7 @@ public class FichaTecnica {
     private Material material;
 
     @Column(nullable = false)
-    private Double quantidadeNecessaria;
+    private Double qtdNecessaria;
 
     @Column(nullable = false)
     private boolean ativo = true;
@@ -52,12 +52,12 @@ public class FichaTecnica {
         this.material = material;
     }
 
-    public Double getQuantidadeNecessaria() {
-        return quantidadeNecessaria;
+    public Double getQtdNecessaria() {
+        return qtdNecessaria;
     }
 
-    public void setQuantidadeNecessaria(Double quantidadeNecessaria) {
-        this.quantidadeNecessaria = quantidadeNecessaria;
+    public void setQtdNecessaria(Double qtdNecessaria) {
+        this.qtdNecessaria = qtdNecessaria;
     }
 
     public boolean isAtivo() {

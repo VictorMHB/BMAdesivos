@@ -1,4 +1,4 @@
-package com.github.victormhb.bmadesivos.dto;
+package com.github.victormhb.bmadesivos.dto.cliente;
 
 public class ClienteUpdateDTO {
 

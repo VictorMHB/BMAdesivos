@@ -1,4 +1,4 @@
-package com.github.victormhb.bmadesivos.dto;
+package com.github.victormhb.bmadesivos.dto.auth;
 
 import com.github.victormhb.bmadesivos.entity.Funcionario;
 

@@ -1,8 +1,8 @@
 package com.github.victormhb.bmadesivos.controller;
 
-import com.github.victormhb.bmadesivos.dto.LoginRequest;
-import com.github.victormhb.bmadesivos.dto.LoginResponse;
-import com.github.victormhb.bmadesivos.dto.RegisterRequest;
+import com.github.victormhb.bmadesivos.dto.auth.LoginRequest;
+import com.github.victormhb.bmadesivos.dto.auth.LoginResponse;
+import com.github.victormhb.bmadesivos.dto.auth.RegisterRequest;
 import com.github.victormhb.bmadesivos.entity.Funcionario;
 import com.github.victormhb.bmadesivos.repository.FuncionarioRepository;
 import com.github.victormhb.bmadesivos.security.AutenticacaoService;
