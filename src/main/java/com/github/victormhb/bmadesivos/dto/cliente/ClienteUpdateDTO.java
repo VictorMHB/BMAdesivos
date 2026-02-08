@@ -6,6 +6,7 @@ public class ClienteUpdateDTO {
     private String cpfCnpj;
     private String email;
     private String telefone;
+    private EnderecoDTO endereco;
 
 
     public ClienteUpdateDTO() {
@@ -29,6 +30,8 @@ public class ClienteUpdateDTO {
         return telefone;
     }
 
+    public EnderecoDTO getEndereco() {return endereco;}
+
     public void setNome(String nome) {
         this.nome = nome;
     }
@@ -44,4 +47,6 @@ public class ClienteUpdateDTO {
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
+
+    public void setEndereco(EnderecoDTO endereco) {this.endereco = endereco;}
 }

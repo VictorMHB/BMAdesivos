@@ -21,6 +21,9 @@ public class Produto {
     private Double precoVenda;
 
     @Column(nullable = false)
+    private Integer estoqueAtual;
+
+    @Column(nullable = false)
     private boolean ativo = true;
 
     public Produto() {}
@@ -62,6 +65,14 @@ public class Produto {
 
     public void setPrecoVenda(Double precoVenda) {
         this.precoVenda = precoVenda;
+    }
+
+    public Integer getEstoqueAtual() {
+        return estoqueAtual;
+    }
+
+    public void setEstoqueAtual(Integer estoqueAtual) {
+        this.estoqueAtual = estoqueAtual;
     }
 
     public boolean isAtivo() {

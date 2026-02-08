@@ -4,6 +4,8 @@ import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.stella.validation.CPFValidator;
 
 import br.com.caelum.stella.validation.InvalidStateException;
+import com.github.victormhb.bmadesivos.dto.cliente.ClienteDTO;
+import com.github.victormhb.bmadesivos.dto.cliente.ClienteUpdateDTO;
 import com.github.victormhb.bmadesivos.entity.Cliente;
 import com.github.victormhb.bmadesivos.entity.Endereco;
 import com.github.victormhb.bmadesivos.repository.ClienteRepository;
@@ -13,7 +15,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -39,89 +40,66 @@ public class ClienteService {
         return repositorio.findById(id);
     }
 
-    public void adicionarCliente(Cliente cliente) throws Exception {
-        if (cliente.getNome().isEmpty()) {
+    public void adicionarCliente(ClienteDTO dto) throws Exception {
+        if (dto.nome() == null || dto.nome().isEmpty()) {
             throw new Exception("Nome não pode ser vazio");
         }
-        if (cliente.getCpfCnpj().isEmpty()) {
-            throw new Exception("CPF/CNPJ não podem ser vazios");
-        }
 
-        validarCpfCnpj(cliente.getCpfCnpj());
+        validarCpfCnpj(dto.cpfCnpj());
 
-        if (cliente.getTelefone().isEmpty()) {
-            throw new Exception("Telefone não pode ser vazio.");
+        Cliente cliente = new Cliente();
+        cliente.setNome(dto.nome());
+        cliente.setCpfCnpj(dto.cpfCnpj());
+        cliente.setEmail(dto.email());
+        cliente.setTelefone(dto.telefone());
+        cliente.setAtivo(true);
+
+        if (dto.endereco() != null) {
+            Endereco endereco = new Endereco();
+            endereco.setRua(dto.endereco().rua());
+            endereco.setNumero(dto.endereco().numero());
+            endereco.setBairro(dto.endereco().bairro());
+            endereco.setCidade(dto.endereco().cidade());
+            endereco.setEstado(dto.endereco().estado());
+            endereco.setCep(dto.endereco().cep());
+            cliente.setEndereco(endereco);
         }
 
         repositorio.save(cliente);
     }
 
-    public Cliente atualizarCliente(Cliente cliente) throws Exception {
-        if (!repositorio.existsById(cliente.getId())) {
-            throw new Exception("Cliente com ID " + cliente.getId() + " não encontrado.");
+    public Cliente atualizarCliente(Long id, ClienteUpdateDTO dto) throws Exception {
+        Cliente cliente = repositorio.findById(id)
+                .orElseThrow(() -> new Exception("Cliente com ID " + id + " não foi encontrado."));
+
+        if (dto.getNome() != null && !dto.getNome().isEmpty()) {
+            cliente.setNome(dto.getNome());
         }
 
-        validarCpfCnpj(cliente.getCpfCnpj());
-
-        return repositorio.save(cliente);
-    }
-
-    public Cliente atualizarClienteParcial(Long id, Map<String, Object> updates) throws Exception {
-        Optional<Cliente> clienteOptional = repositorio.findById(id);
-
-        if (clienteOptional.isEmpty()) {
-            throw new Exception("Cliente com ID " + id + " não encontrado.");
+        if (dto.getEmail() != null) {
+            cliente.setEmail(dto.getEmail());
         }
 
-        Cliente cliente = clienteOptional.get();
-
-        if (updates.containsKey("nome")) {
-            String novoNome = (String) updates.get("nome");
-            if (novoNome != null && !novoNome.isEmpty()) {
-                cliente.setNome(novoNome);
-            } else {
-                throw new Exception("Nome não pode ser vazio");
-            }
+        if (dto.getCpfCnpj() != null && !dto.getCpfCnpj().isEmpty()) {
+            validarCpfCnpj(dto.getCpfCnpj());
+            cliente.setCpfCnpj(dto.getCpfCnpj());
         }
 
-        if (updates.containsKey("email")) {
-            cliente.setEmail((String) updates.get("email"));
+        if (dto.getTelefone() != null && !dto.getTelefone().isEmpty()) {
+            cliente.setTelefone(dto.getTelefone());
         }
 
-        if (updates.containsKey("telefone")) {
-            String novoTel = (String) updates.get("telefone");
-            if (novoTel != null && !novoTel.isEmpty()) {
-                cliente.setTelefone(novoTel);
-            } else {
-                throw new Exception("Telefone não pode ser vazio");
-            }
-        }
+        if (dto.getEndereco() != null) {
+            Endereco endereco = cliente.getEndereco() != null ? cliente.getEndereco() : new Endereco();
 
-        if (updates.containsKey("cpfCnpj")) {
-            String novoDoc = (String) updates.get("cpfCnpj");
-            validarCpfCnpj(novoDoc);
-            cliente.setCpfCnpj(novoDoc);
-        }
+            if (dto.getEndereco().rua() != null) { endereco.setRua(dto.getEndereco().rua()); }
+            if (dto.getEndereco().numero() != null) { endereco.setNumero(dto.getEndereco().numero()); }
+            if (dto.getEndereco().bairro() != null) { endereco.setBairro(dto.getEndereco().bairro()); }
+            if (dto.getEndereco().cidade() != null) { endereco.setCidade(dto.getEndereco().cidade()); }
+            if (dto.getEndereco().estado() != null) { endereco.setEstado(dto.getEndereco().estado()); }
+            if (dto.getEndereco().cep() != null) { endereco.setCidade(dto.getEndereco().cep()); }
 
-        if (updates.containsKey("ativo")) {
-            cliente.setAtivo((Boolean) updates.get("ativo"));
-        }
-
-        if (updates.containsKey("endereco")) {
-            Map<String, Object> enderecoMap = (Map<String, Object>) updates.get("endereco");
-
-            Endereco endereco = cliente.getEndereco();
-            if (endereco == null) {
-                endereco = new Endereco();
-                cliente.setEndereco(endereco);
-            }
-
-            if (enderecoMap.containsKey("rua")) endereco.setRua((String) enderecoMap.get("rua"));
-            if (enderecoMap.containsKey("numero")) endereco.setNumero((String) enderecoMap.get("numero"));
-            if (enderecoMap.containsKey("bairro")) endereco.setBairro((String) enderecoMap.get("bairro"));
-            if (enderecoMap.containsKey("cidade")) endereco.setCidade((String) enderecoMap.get("cidade"));
-            if (enderecoMap.containsKey("estado")) endereco.setEstado((String) enderecoMap.get("estado"));
-            if (enderecoMap.containsKey("cep")) endereco.setCep((String) enderecoMap.get("cep"));
+            cliente.setEndereco(endereco);
         }
 
         return repositorio.save(cliente);

@@ -1,0 +1,96 @@
+package com.github.victormhb.bmadesivos.service;
+
+import br.com.caelum.stella.validation.InvalidStateException;
+import com.github.victormhb.bmadesivos.dto.MaterialDTO;
+import com.github.victormhb.bmadesivos.entity.Material;
+import com.github.victormhb.bmadesivos.repository.MaterialRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class MaterialService {
+
+    private final MaterialRepository repositorio;
+
+    @Autowired
+    public MaterialService(MaterialRepository repositorio) {
+        this.repositorio = repositorio;
+    }
+
+    public List<Material> listarTodos() {
+        return repositorio.findAll(Sort.by(Sort.Direction.ASC, "nome"));
+    }
+
+    public Optional<Material> buscarPorId(Long id) {
+        return repositorio.findById(id);
+    }
+
+    public Material salvar(MaterialDTO dto) throws Exception {
+        if (dto.nome() == null || dto.nome().trim().isEmpty()) {
+            throw new Exception("O nome do material é obrigatório.");
+        }
+
+        Material material = new Material();
+        material.setNome(dto.nome());
+        material.setUnidadeMedida(dto.unidadeMedida());
+        material.setEstoqueAtual(dto.estoqueAtual() != null ? dto.estoqueAtual() : 0.0);
+        material.setEstoqueMinimo(dto.estoqueMinimo() != null ? dto.estoqueMinimo() : 0.0);
+        material.setCustoUnitario(dto.custoUnitario() != null ? dto.custoUnitario() : 0.0);
+        material.setAtivo(true);
+
+        return repositorio.save(material);
+    }
+
+    public Material atualizar(Long id, MaterialDTO dto) throws Exception {
+        Material material = repositorio.findById(id)
+                .orElseThrow(() -> new Exception("Material com ID " + id + " não foi encontrado"));
+
+        if (dto.nome() != null && !dto.nome().trim().isEmpty()) {
+            material.setNome(dto.nome());
+        }
+        if (dto.unidadeMedida() != null) {
+            material.setUnidadeMedida(dto.unidadeMedida());
+        }
+        if (dto.estoqueAtual() != null) {
+            material.setEstoqueAtual(dto.estoqueAtual());
+        }
+        if (dto.estoqueMinimo() != null) {
+            material.setEstoqueMinimo(dto.estoqueMinimo());
+        }
+        if (dto.custoUnitario() != null) {
+            material.setCustoUnitario(dto.custoUnitario());
+        }
+
+        return repositorio.save(material);
+    }
+
+    public void baixarEstoque(Long id, Double qtdConsumida) throws Exception {
+        Material material = repositorio.findById(id)
+                .orElseThrow(() -> new Exception("Material não encontrado"));
+
+        if (material.getEstoqueAtual() < qtdConsumida) {
+            throw new Exception("Estoque insuficiente de " + material.getNome());
+        }
+
+        material.setEstoqueAtual(material.getEstoqueAtual() - qtdConsumida);
+        repositorio.save(material);
+
+        if (material.getEstoqueAtual() <= material.getEstoqueMinimo()) {
+            System.out.println("ALERTA: " + material.getNome() + " atingiu o nível crítico.");
+        }
+    }
+
+    @Transactional
+    public void deletar(Long id) throws Exception {
+        Material material = repositorio.findById(id)
+                .orElseThrow(() -> new Exception("Material não encontrado"));
+
+        material.setAtivo(false);
+        repositorio.save(material);
+    }
+}
