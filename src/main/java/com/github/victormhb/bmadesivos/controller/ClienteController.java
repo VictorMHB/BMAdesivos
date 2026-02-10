@@ -1,5 +1,7 @@
 package com.github.victormhb.bmadesivos.controller;
 
+import com.github.victormhb.bmadesivos.dto.cliente.ClienteDTO;
+import com.github.victormhb.bmadesivos.dto.cliente.ClienteUpdateDTO;
 import com.github.victormhb.bmadesivos.entity.Cliente;
 import com.github.victormhb.bmadesivos.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,68 +10,62 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/clientes")
-@CrossOrigin(origins = "http://localhost:5173", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.OPTIONS})
+@CrossOrigin(origins = "http://localhost:5173",
+        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.OPTIONS})
 public class ClienteController {
 
-    private final ClienteService servico;
+    private final ClienteService clienteService;
 
     @Autowired
-    public ClienteController(ClienteService servico) {
-        this.servico = servico;
-    }
-
-    @PostMapping("novo")
-    public void criarCliente(@RequestBody Cliente cliente) throws Exception {
-        servico.adicionarCliente(cliente);
+    public ClienteController(ClienteService clienteService) {
+        this.clienteService = clienteService;
     }
 
     @GetMapping("todos")
     public List<Cliente> listarClientes(){
-        return servico.listar();
+        return clienteService.listar();
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Cliente> getClientePorId(@PathVariable Long id) {
-        Optional<Cliente> cliente = servico.buscarPorId(id);
-
-        if (cliente.isPresent()) {
-            return ResponseEntity.ok(cliente.get()); //Retorna 200
-        } else  {
-            return ResponseEntity.notFound().build(); //Retorna 404 Not Found
+    public ResponseEntity<?> getClientePorId(@PathVariable Long id) {
+        try {
+            Cliente cliente = clienteService.buscarPorId(id);
+            return ResponseEntity.ok(cliente);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
-    @PutMapping("editar")
-    public ResponseEntity<Cliente> atualizarCliente(@RequestBody Cliente cliente) {
+    @PostMapping("/novo")
+    public ResponseEntity<?> criarCliente(@RequestBody ClienteDTO dto) {
         try {
-            Cliente clienteAtualizado = servico.atualizarCliente(cliente);
-            return ResponseEntity.ok(clienteAtualizado); //Retorna 200
+            clienteService.adicionarCliente(dto);
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.notFound().build(); //Retorna 404 Not Found
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @PatchMapping("/editar/{id}")
-    public ResponseEntity<Cliente> atualizarParcialCliente(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+    public ResponseEntity<?> atualizarCliente(@PathVariable Long id, @RequestBody ClienteUpdateDTO dto) {
         try {
-            Cliente clienteAtualizado = servico.atualizarClienteParcial(id, updates);
+            Cliente clienteAtualizado = clienteService.atualizarCliente(id, dto);
             return ResponseEntity.ok(clienteAtualizado); //Retorna 200
         } catch (Exception e) {
-            return ResponseEntity.notFound().build(); //Retorna 404 Not Found
+            return ResponseEntity.badRequest().body(e.getMessage()); //Retorna 404 Not Found
         }
     }
 
     @DeleteMapping("apagar/{id}")
-    public ResponseEntity<Void> deletarCliente(@PathVariable Long id) {
-        boolean deletado = servico.deletarPorId(id);
-        if (deletado) {
-            return ResponseEntity.ok().build(); //Retorna 200 OK
-        } else  {
-            return ResponseEntity.notFound().build(); //Retorna 404 Not Found
+    public ResponseEntity<?> deletarCliente(@PathVariable Long id) {
+        try {
+            clienteService.deletarPorId(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

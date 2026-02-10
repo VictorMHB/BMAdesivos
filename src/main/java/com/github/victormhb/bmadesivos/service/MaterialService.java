@@ -4,7 +4,7 @@ import br.com.caelum.stella.validation.InvalidStateException;
 import com.github.victormhb.bmadesivos.dto.MaterialDTO;
 import com.github.victormhb.bmadesivos.entity.Material;
 import com.github.victormhb.bmadesivos.repository.MaterialRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;

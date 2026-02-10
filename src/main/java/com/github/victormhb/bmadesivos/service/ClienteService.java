@@ -20,24 +20,25 @@ import java.util.Optional;
 @Service
 public class ClienteService {
 
-    private final ClienteRepository repositorio;
+    private final ClienteRepository clienteRepository;
     private final CPFValidator validarCpf = new CPFValidator();
     private final CNPJValidator validarCnpj = new CNPJValidator();
 
     @Autowired
     public ClienteService(ClienteRepository repositorio) {
-        this.repositorio = repositorio;
+        this.clienteRepository = repositorio;
     }
 
     public List<Cliente> listar() {
         Sort ordenacao = Sort.by(Sort.Direction.DESC, "ativo")
                 .and(Sort.by(Sort.Direction.ASC, "nome"));
 
-        return repositorio.findAll(ordenacao);
+        return clienteRepository.findAll(ordenacao);
     }
 
-    public Optional<Cliente> buscarPorId(Long id) {
-        return repositorio.findById(id);
+    public Cliente buscarPorId(Long id) throws Exception {
+        return clienteRepository.findById(id)
+                .orElseThrow(() -> new Exception("Cliente com a ID: " + id + " não encontrado."));
     }
 
     public void adicionarCliente(ClienteDTO dto) throws Exception {
@@ -65,12 +66,11 @@ public class ClienteService {
             cliente.setEndereco(endereco);
         }
 
-        repositorio.save(cliente);
+        clienteRepository.save(cliente);
     }
 
     public Cliente atualizarCliente(Long id, ClienteUpdateDTO dto) throws Exception {
-        Cliente cliente = repositorio.findById(id)
-                .orElseThrow(() -> new Exception("Cliente com ID " + id + " não foi encontrado."));
+        Cliente cliente = buscarPorId(id);
 
         if (dto.getNome() != null && !dto.getNome().isEmpty()) {
             cliente.setNome(dto.getNome());
@@ -102,7 +102,7 @@ public class ClienteService {
             cliente.setEndereco(endereco);
         }
 
-        return repositorio.save(cliente);
+        return clienteRepository.save(cliente);
     }
 
     private void validarCpfCnpj(String cpfCnpj) throws Exception {
@@ -118,8 +118,8 @@ public class ClienteService {
     }
 
     public boolean deletarPorId(Long id) {
-        if (repositorio.existsById(id)) {
-            repositorio.deleteById(id);
+        if (clienteRepository.existsById(id)) {
+            clienteRepository.deleteById(id);
             return true;
         }
 

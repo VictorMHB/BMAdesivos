@@ -3,7 +3,7 @@ package com.github.victormhb.bmadesivos.service;
 import com.github.victormhb.bmadesivos.dto.ProdutoDTO;
 import com.github.victormhb.bmadesivos.entity.Produto;
 import com.github.victormhb.bmadesivos.repository.ProdutoRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
