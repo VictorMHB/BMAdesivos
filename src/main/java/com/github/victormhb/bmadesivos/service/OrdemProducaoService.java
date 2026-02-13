@@ -40,8 +40,7 @@ public class OrdemProducaoService {
 
     @Transactional
     public OrdemProducao abrirOrdem(OrdemProducaoDTO dto) throws Exception {
-        Produto produto = produtoService.buscarProdutoPorId(dto.produtoId())
-                .orElseThrow(() -> new Exception("Produto não encontrado."));
+        Produto produto = produtoService.buscarPorId(dto.produtoId());
 
         Funcionario funcionario = funcionarioRepository.findById(dto.funcionarioId())
                 .orElseThrow(() -> new Exception("Funcionário não encontrado."));
@@ -81,7 +80,7 @@ public class OrdemProducaoService {
         produtoService.aumentarEstoque(ordemProducao.getProduto().getId(), ordemProducao.getQuantidade());
 
         ordemProducao.setStatus(OrdemProducao.StatusOrdem.CONCLUIDO);
-        ordemProducao.setDataAbertura(LocalDateTime.now());
+        ordemProducao.setDataConclusao(LocalDateTime.now());
 
         return ordemProducaoRepository.save(ordemProducao);
     }

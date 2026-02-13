@@ -15,21 +15,23 @@ import java.util.Optional;
 @Service
 public class MaterialService {
 
-    private final MaterialRepository repositorio;
+    private final MaterialRepository materialRepository;
 
     @Autowired
-    public MaterialService(MaterialRepository repositorio) {
-        this.repositorio = repositorio;
+    public MaterialService(MaterialRepository materialRepository) {
+        this.materialRepository = materialRepository;
     }
 
     public List<Material> listarTodos() {
-        return repositorio.findAll(Sort.by(Sort.Direction.ASC, "nome"));
+        return materialRepository.findAll(Sort.by(Sort.Direction.ASC, "nome"));
     }
 
-    public Optional<Material> buscarPorId(Long id) {
-        return repositorio.findById(id);
+    public Material buscarPorId(Long id) throws Exception {
+        return materialRepository.findById(id)
+                .orElseThrow(() -> new Exception("Material com ID: " + id + " não foi encontrado"));
     }
 
+    @Transactional
     public Material salvar(MaterialDTO dto) throws Exception {
         if (dto.nome() == null || dto.nome().trim().isEmpty()) {
             throw new Exception("O nome do material é obrigatório.");
@@ -43,11 +45,12 @@ public class MaterialService {
         material.setCustoUnitario(dto.custoUnitario() != null ? dto.custoUnitario() : 0.0);
         material.setAtivo(true);
 
-        return repositorio.save(material);
+        return materialRepository.save(material);
     }
 
+    @Transactional
     public Material atualizar(Long id, MaterialDTO dto) throws Exception {
-        Material material = repositorio.findById(id)
+        Material material = materialRepository.findById(id)
                 .orElseThrow(() -> new Exception("Material com ID " + id + " não foi encontrado"));
 
         if (dto.nome() != null && !dto.nome().trim().isEmpty()) {
@@ -66,11 +69,12 @@ public class MaterialService {
             material.setCustoUnitario(dto.custoUnitario());
         }
 
-        return repositorio.save(material);
+        return materialRepository.save(material);
     }
 
+    @Transactional
     public void baixarEstoque(Long id, Double qtdConsumida) throws Exception {
-        Material material = repositorio.findById(id)
+        Material material = materialRepository.findById(id)
                 .orElseThrow(() -> new Exception("Material não encontrado"));
 
         if (material.getEstoqueAtual() < qtdConsumida) {
@@ -78,7 +82,7 @@ public class MaterialService {
         }
 
         material.setEstoqueAtual(material.getEstoqueAtual() - qtdConsumida);
-        repositorio.save(material);
+        materialRepository.save(material);
 
         if (material.getEstoqueAtual() <= material.getEstoqueMinimo()) {
             System.out.println("ALERTA: " + material.getNome() + " atingiu o nível crítico.");
@@ -87,10 +91,10 @@ public class MaterialService {
 
     @Transactional
     public void deletar(Long id) throws Exception {
-        Material material = repositorio.findById(id)
+        Material material = materialRepository.findById(id)
                 .orElseThrow(() -> new Exception("Material não encontrado"));
 
         material.setAtivo(false);
-        repositorio.save(material);
+        materialRepository.save(material);
     }
 }

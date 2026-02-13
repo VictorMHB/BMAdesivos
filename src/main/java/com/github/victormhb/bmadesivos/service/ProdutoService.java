@@ -12,20 +12,22 @@ import java.util.Optional;
 
 @Service
 public class ProdutoService {
-    private final ProdutoRepository repositorio;
+    private final ProdutoRepository produtoRepository;
 
     public ProdutoService(ProdutoRepository repositorio) {
-        this.repositorio = repositorio;
+        this.produtoRepository = repositorio;
     }
 
     public List<Produto> listarProdutos(){
-        return repositorio.findAll(Sort.by(Sort.Direction.ASC, "nome"));
+        return produtoRepository.findAll(Sort.by(Sort.Direction.ASC, "nome"));
     }
 
-    public Optional<Produto> buscarProdutoPorId(Long id){
-        return repositorio.findById(id);
+    public Produto buscarPorId(Long id) throws Exception {
+        return produtoRepository.findById(id)
+                .orElseThrow(() -> new Exception("Produto com ID: " + id + " não foi encontrado."));
     }
 
+    @Transactional
     public Produto salvar(ProdutoDTO dto) throws Exception {
         if (dto.nome() == null || dto.nome().trim().isBlank()){
             throw new Exception("O nome do produto é obrigatório.");
@@ -42,12 +44,12 @@ public class ProdutoService {
         produto.setEstoqueAtual(dto.estoqueAtual() != null ? dto.estoqueAtual() : 0);
         produto.setAtivo(true);
 
-        return repositorio.save(produto);
+        return produtoRepository.save(produto);
     }
 
     @Transactional
     public Produto atualizar(Long id, ProdutoDTO dto) throws Exception {
-        Produto produto = repositorio.findById(id)
+        Produto produto = produtoRepository.findById(id)
                 .orElseThrow(() -> new Exception("Produto com ID: " + id + " não encontrado."));
 
         if (dto.nome() != null && !dto.nome().trim().isBlank()) {
@@ -63,11 +65,12 @@ public class ProdutoService {
             produto.setEstoqueAtual(dto.estoqueAtual());
         }
 
-        return repositorio.save(produto);
+        return produtoRepository.save(produto);
     }
 
+    @Transactional
     public void aumentarEstoque(Long id, Integer qtdProduzida) throws Exception {
-        Produto produto = repositorio.findById(id)
+        Produto produto = produtoRepository.findById(id)
                 .orElseThrow(() -> new Exception("Produto com ID: " + id + " não encontrado."));
 
         if (qtdProduzida <= 0) {
@@ -75,15 +78,16 @@ public class ProdutoService {
         }
 
         produto.setEstoqueAtual(produto.getEstoqueAtual() + qtdProduzida);
-        repositorio.save(produto);
+        produtoRepository.save(produto);
     }
 
+    @Transactional
     public void deletar(Long id) throws Exception {
-        Produto produto = repositorio.findById(id)
+        Produto produto = produtoRepository.findById(id)
                 .orElseThrow(() -> new Exception("Produto não encontrado."));
 
         produto.setAtivo(false);
-        repositorio.save(produto);
+        produtoRepository.save(produto);
     }
 
 }

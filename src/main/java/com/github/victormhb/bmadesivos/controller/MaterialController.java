@@ -2,6 +2,7 @@ package com.github.victormhb.bmadesivos.controller;
 
 import com.github.victormhb.bmadesivos.dto.MaterialDTO;
 import com.github.victormhb.bmadesivos.entity.Material;
+import com.github.victormhb.bmadesivos.entity.Produto;
 import com.github.victormhb.bmadesivos.service.MaterialService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,16 @@ public class MaterialController {
     @GetMapping
     public List<Material> listar() {
         return materialService.listarTodos();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> buscarPorId(@PathVariable Long id){
+        try {
+            Material material = materialService.buscarPorId(id);
+            return ResponseEntity.ok(material);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping("/novo")

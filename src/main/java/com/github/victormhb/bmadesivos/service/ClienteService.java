@@ -13,9 +13,9 @@ import com.github.victormhb.bmadesivos.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ClienteService {
@@ -41,6 +41,7 @@ public class ClienteService {
                 .orElseThrow(() -> new Exception("Cliente com a ID: " + id + " não encontrado."));
     }
 
+    @Transactional
     public void adicionarCliente(ClienteDTO dto) throws Exception {
         if (dto.nome() == null || dto.nome().isEmpty()) {
             throw new Exception("Nome não pode ser vazio");
@@ -69,6 +70,7 @@ public class ClienteService {
         clienteRepository.save(cliente);
     }
 
+    @Transactional
     public Cliente atualizarCliente(Long id, ClienteUpdateDTO dto) throws Exception {
         Cliente cliente = buscarPorId(id);
 
@@ -97,7 +99,7 @@ public class ClienteService {
             if (dto.getEndereco().bairro() != null) { endereco.setBairro(dto.getEndereco().bairro()); }
             if (dto.getEndereco().cidade() != null) { endereco.setCidade(dto.getEndereco().cidade()); }
             if (dto.getEndereco().estado() != null) { endereco.setEstado(dto.getEndereco().estado()); }
-            if (dto.getEndereco().cep() != null) { endereco.setCidade(dto.getEndereco().cep()); }
+            if (dto.getEndereco().cep() != null) { endereco.setCep(dto.getEndereco().cep()); }
 
             cliente.setEndereco(endereco);
         }
@@ -117,13 +119,11 @@ public class ClienteService {
         }
     }
 
-    public boolean deletarPorId(Long id) {
-        if (clienteRepository.existsById(id)) {
-            clienteRepository.deleteById(id);
-            return true;
-        }
-
-        return false;
+    @Transactional
+    public void deletarPorId(Long id) throws Exception {
+        Cliente cliente = buscarPorId(id);
+        cliente.setAtivo(false);
+        clienteRepository.save(cliente);
     }
 
 
