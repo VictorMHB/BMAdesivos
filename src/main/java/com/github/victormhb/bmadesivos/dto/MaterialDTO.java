@@ -5,6 +5,6 @@ public record MaterialDTO(
         String unidadeMedida,
         Double estoqueAtual,
         Double estoqueMinimo,
-        Double custoUnitario
+        Double valorUnitario
 )
 { }

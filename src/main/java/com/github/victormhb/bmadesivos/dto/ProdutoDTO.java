@@ -4,5 +4,6 @@ public record ProdutoDTO(
         String nome,
         String descricao,
         Double precoVenda,
-        Integer estoqueAtual
+        Integer estoqueAtual,
+        Long clienteId
 ) { }

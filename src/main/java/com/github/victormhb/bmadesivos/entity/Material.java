@@ -24,7 +24,7 @@ public class Material {
     @Column(nullable = false)
     private String unidadeMedida;
 
-    private Double custoUnitario;
+    private Double valorUnitario;
 
     @Column(nullable = false)
     private boolean ativo = true;
@@ -33,12 +33,12 @@ public class Material {
 
     }
 
-    public Material(String nome, Double estoqueAtual, Double estoqueMinimo, String unidadeMedida, Double custoUnitario) {
+    public Material(String nome, Double estoqueAtual, Double estoqueMinimo, String unidadeMedida, Double valorUnitario) {
         this.nome = nome;
         this.estoqueAtual = estoqueAtual;
         this.estoqueMinimo = estoqueMinimo;
         this.unidadeMedida = unidadeMedida;
-        this.custoUnitario = custoUnitario;
+        this.valorUnitario = valorUnitario;
         this.ativo = true;
     }
 
@@ -82,12 +82,12 @@ public class Material {
         this.unidadeMedida = unidadeMedida;
     }
 
-    public Double getCustoUnitario() {
-        return custoUnitario;
+    public Double getValorUnitario() {
+        return valorUnitario;
     }
 
-    public void setCustoUnitario(Double custoUnitario) {
-        this.custoUnitario = custoUnitario;
+    public void setValorUnitario(Double valorUnitario) {
+        this.valorUnitario = valorUnitario;
     }
 
     public boolean isAtivo() {

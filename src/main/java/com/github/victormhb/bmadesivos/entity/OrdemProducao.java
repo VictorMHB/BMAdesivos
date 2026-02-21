@@ -22,6 +22,10 @@ public class OrdemProducao {
     @JoinColumn(name = "funcionario_id", nullable = false)
     private Funcionario funcionario;
 
+    @ManyToOne
+    @JoinColumn(name = "cliente_id", nullable = false)
+    private Cliente cliente;
+
     @Column(nullable = false)
     private Integer quantidade;
 
@@ -66,6 +70,14 @@ public class OrdemProducao {
 
     public void setFuncionario(Funcionario funcionario) {
         this.funcionario = funcionario;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 
     public Integer getQuantidade() {

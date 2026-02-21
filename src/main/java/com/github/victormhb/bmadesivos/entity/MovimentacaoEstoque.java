@@ -22,7 +22,11 @@ public class MovimentacaoEstoque {
     @Column(nullable = false)
     private Double quantidade;
 
+    @Column(nullable = false)
+    private Double valorUnitario;
+
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private TipoMovimentacao tipo;
 
     private LocalDateTime dataHora = LocalDateTime.now();
@@ -72,6 +76,14 @@ public class MovimentacaoEstoque {
 
     public void setQuantidade(Double quantidade) {
         this.quantidade = quantidade;
+    }
+
+    public Double getValorUnitario() {
+        return valorUnitario;
+    }
+
+    public void setValorUnitario(Double valorUnitario) {
+        this.valorUnitario = valorUnitario;
     }
 
     public TipoMovimentacao getTipo() {

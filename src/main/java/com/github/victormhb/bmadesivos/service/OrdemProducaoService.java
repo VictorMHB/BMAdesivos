@@ -1,10 +1,7 @@
 package com.github.victormhb.bmadesivos.service;
 
 import com.github.victormhb.bmadesivos.dto.OrdemProducaoDTO;
-import com.github.victormhb.bmadesivos.entity.FichaTecnica;
-import com.github.victormhb.bmadesivos.entity.Funcionario;
-import com.github.victormhb.bmadesivos.entity.OrdemProducao;
-import com.github.victormhb.bmadesivos.entity.Produto;
+import com.github.victormhb.bmadesivos.entity.*;
 import com.github.victormhb.bmadesivos.repository.FuncionarioRepository;
 import com.github.victormhb.bmadesivos.repository.MaterialRepository;
 import com.github.victormhb.bmadesivos.repository.OrdemProducaoRepository;
@@ -19,26 +16,32 @@ public class OrdemProducaoService {
 
     private final OrdemProducaoRepository ordemProducaoRepository;
     private final ProdutoService produtoService;
-    private final MaterialRepository materialRepository;
     private final FichaTecnicaService fichaTecnicaService;
     private final FuncionarioRepository funcionarioRepository;
     private final MaterialService materialService;
+    private final MovimentacaoService movimentacaoService;
 
     public OrdemProducaoService(OrdemProducaoRepository ordemProducaoRepository,
                                 ProdutoService produtoService,
                                 MaterialRepository materialRepository,
                                 FichaTecnicaService fichaTecnicaService,
-                                FuncionarioRepository funcionarioRepository, MaterialService materialService)
+                                FuncionarioRepository funcionarioRepository,
+                                MaterialService materialService,
+                                MovimentacaoService movimentacaoService)
     {
         this.ordemProducaoRepository = ordemProducaoRepository;
         this.produtoService = produtoService;
-        this.materialRepository = materialRepository;
         this.fichaTecnicaService = fichaTecnicaService;
         this.funcionarioRepository = funcionarioRepository;
         this.materialService = materialService;
+        this.movimentacaoService = movimentacaoService;
     }
 
-    @Transactional
+    public List<OrdemProducao> listarTodas() {
+        return ordemProducaoRepository.findAll();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public OrdemProducao abrirOrdem(OrdemProducaoDTO dto) throws Exception {
         Produto produto = produtoService.buscarPorId(dto.produtoId());
 
@@ -47,6 +50,13 @@ public class OrdemProducaoService {
 
         OrdemProducao ordemProducao = new OrdemProducao();
         ordemProducao.setProduto(produto);
+
+        if (produto.getCliente() == null) {
+            throw new Exception("O produto selecionado não possui um cliente vinculado.");
+        }
+
+        ordemProducao.setCliente(produto.getCliente());
+
         ordemProducao.setFuncionario(funcionario);
         ordemProducao.setQuantidade(dto.quantidade());
         ordemProducao.setStatus(OrdemProducao.StatusOrdem.PENDENTE);
@@ -55,6 +65,7 @@ public class OrdemProducaoService {
 
         return ordemProducaoRepository.save(ordemProducao);
     }
+
 
     @Transactional(rollbackFor = Exception.class)
     public OrdemProducao finalizarOrdem(Long id) throws Exception {
@@ -69,15 +80,33 @@ public class OrdemProducaoService {
                 .buscarReceitaProduto(ordemProducao.getProduto().getId());
 
         if (itensFicha.isEmpty()) {
-            throw new Exception("Produto sem Ficha Técnica cadastrada.");
+            throw new Exception("Produto não possui uma Ficha Técnica cadastrada.");
         }
 
         for (FichaTecnica t: itensFicha) {
             Double qtdConsumida = t.getQtdNecessaria() * ordemProducao.getQuantidade();
+
             materialService.baixarEstoque(t.getMaterial().getId(), qtdConsumida);
+
+            MovimentacaoEstoque movMaterial = new MovimentacaoEstoque();
+            movMaterial.setMaterial(t.getMaterial());
+            movMaterial.setQuantidade(-qtdConsumida);
+            movMaterial.setTipo(MovimentacaoEstoque.TipoMovimentacao.SAIDA_MATERIAL);
+            movMaterial.setValorUnitario(t.getMaterial().getValorUnitario());
+            movMaterial.setObservacao("Consumo automático para Ordem de Produção #" + ordemProducao.getId());
+
+            movimentacaoService.registar(movMaterial);
         }
 
         produtoService.aumentarEstoque(ordemProducao.getProduto().getId(), ordemProducao.getQuantidade());
+
+        MovimentacaoEstoque movProducao = new MovimentacaoEstoque();
+        movProducao.setProduto(ordemProducao.getProduto());
+        movProducao.setQuantidade(ordemProducao.getId().doubleValue());
+        movProducao.setTipo(MovimentacaoEstoque.TipoMovimentacao.ENTRADA_PRODUTO);
+        movProducao.setValorUnitario(ordemProducao.getProduto().getPrecoVenda());
+
+        movimentacaoService.registar(movProducao);
 
         ordemProducao.setStatus(OrdemProducao.StatusOrdem.CONCLUIDO);
         ordemProducao.setDataConclusao(LocalDateTime.now());
@@ -96,10 +125,6 @@ public class OrdemProducaoService {
 
         ordemProducao.setStatus(OrdemProducao.StatusOrdem.CANCELADO);
         ordemProducaoRepository.save(ordemProducao);
-    }
-
-    public List<OrdemProducao> listarTodas() {
-        return ordemProducaoRepository.findAll();
     }
 
 }

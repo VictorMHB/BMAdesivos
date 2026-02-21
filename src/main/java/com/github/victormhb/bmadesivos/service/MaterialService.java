@@ -42,7 +42,7 @@ public class MaterialService {
         material.setUnidadeMedida(dto.unidadeMedida());
         material.setEstoqueAtual(dto.estoqueAtual() != null ? dto.estoqueAtual() : 0.0);
         material.setEstoqueMinimo(dto.estoqueMinimo() != null ? dto.estoqueMinimo() : 0.0);
-        material.setCustoUnitario(dto.custoUnitario() != null ? dto.custoUnitario() : 0.0);
+        material.setValorUnitario(dto.valorUnitario() != null ? dto.valorUnitario() : 0.0);
         material.setAtivo(true);
 
         return materialRepository.save(material);
@@ -65,8 +65,8 @@ public class MaterialService {
         if (dto.estoqueMinimo() != null) {
             material.setEstoqueMinimo(dto.estoqueMinimo());
         }
-        if (dto.custoUnitario() != null) {
-            material.setCustoUnitario(dto.custoUnitario());
+        if (dto.valorUnitario() != null) {
+            material.setValorUnitario(dto.valorUnitario());
         }
 
         return materialRepository.save(material);

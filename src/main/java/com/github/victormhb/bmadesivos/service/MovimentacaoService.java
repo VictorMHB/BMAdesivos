@@ -1,6 +1,9 @@
 package com.github.victormhb.bmadesivos.service;
 
+import com.github.victormhb.bmadesivos.dto.MovimentacaoDTO;
+import com.github.victormhb.bmadesivos.entity.Material;
 import com.github.victormhb.bmadesivos.entity.MovimentacaoEstoque;
+import com.github.victormhb.bmadesivos.entity.Produto;
 import com.github.victormhb.bmadesivos.repository.MovimentacaoEstoqueRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -12,9 +15,13 @@ import java.util.List;
 public class MovimentacaoService {
 
     private final MovimentacaoEstoqueRepository movimentacaoRepository;
+    private final MaterialService materialService;
+    private final ProdutoService produtoService;
 
-    public MovimentacaoService(MovimentacaoEstoqueRepository movimentacaoRepository) {
+    public MovimentacaoService(MovimentacaoEstoqueRepository movimentacaoRepository, MaterialService materialService, ProdutoService produtoService) {
         this.movimentacaoRepository = movimentacaoRepository;
+        this.materialService = materialService;
+        this.produtoService = produtoService;
     }
 
     public List<MovimentacaoEstoque> listarHistorico() {
@@ -29,5 +36,24 @@ public class MovimentacaoService {
     public MovimentacaoEstoque buscarPorId(Long id) throws Exception {
         return movimentacaoRepository.findById(id)
                 .orElseThrow(() -> new Exception("Movimentação com ID: " + id + " não encontrada."));
+    }
+
+    @Transactional
+    public void realizarAjuste(MovimentacaoDTO dto) throws Exception {
+        MovimentacaoEstoque movimentacaoEstoque = new MovimentacaoEstoque();
+        movimentacaoEstoque.setQuantidade(dto.quantidade());
+        movimentacaoEstoque.setTipo(MovimentacaoEstoque.TipoMovimentacao.AJUSTE);
+        movimentacaoEstoque.setValorUnitario(dto.valorUnitario());
+        movimentacaoEstoque.setObservacao(dto.observacao());
+
+        if (dto.materialId() != null) {
+            Material material = materialService.buscarPorId(dto.materialId());
+            movimentacaoEstoque.setMaterial(material);
+        } else if (dto.produtoId() != null) {
+            Produto produto = produtoService.buscarPorId(dto.produtoId());
+            movimentacaoEstoque.setProduto(produto);
+        }
+
+        movimentacaoRepository.save(movimentacaoEstoque);
     }
 }

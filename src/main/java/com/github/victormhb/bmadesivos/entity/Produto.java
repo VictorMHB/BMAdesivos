@@ -26,6 +26,10 @@ public class Produto {
     @Column(nullable = false)
     private boolean ativo = true;
 
+    @ManyToOne
+    @JoinColumn(name = "cliente_id", nullable = false)
+    private Cliente cliente;
+
     public Produto() {}
 
     public Produto(String nome, String descricao, Double precoVenda) {
@@ -81,5 +85,13 @@ public class Produto {
 
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 }

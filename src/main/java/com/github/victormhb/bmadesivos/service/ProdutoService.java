@@ -1,6 +1,7 @@
 package com.github.victormhb.bmadesivos.service;
 
 import com.github.victormhb.bmadesivos.dto.ProdutoDTO;
+import com.github.victormhb.bmadesivos.entity.Cliente;
 import com.github.victormhb.bmadesivos.entity.Produto;
 import com.github.victormhb.bmadesivos.repository.ProdutoRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,9 +14,11 @@ import java.util.Optional;
 @Service
 public class ProdutoService {
     private final ProdutoRepository produtoRepository;
+    private final ClienteService clienteService;
 
-    public ProdutoService(ProdutoRepository repositorio) {
+    public ProdutoService(ProdutoRepository repositorio, ClienteService clienteService) {
         this.produtoRepository = repositorio;
+        this.clienteService = clienteService;
     }
 
     public List<Produto> listarProdutos(){
@@ -37,12 +40,15 @@ public class ProdutoService {
             throw new Exception("O preço de venda deve ser maior que zero.");
         }
 
+        Cliente cliente = clienteService.buscarPorId(dto.clienteId());
+
         Produto produto = new Produto();
         produto.setNome(dto.nome());
         produto.setDescricao(dto.descricao());
         produto.setPrecoVenda(dto.precoVenda());
         produto.setEstoqueAtual(dto.estoqueAtual() != null ? dto.estoqueAtual() : 0);
         produto.setAtivo(true);
+        produto.setCliente(cliente);
 
         return produtoRepository.save(produto);
     }
