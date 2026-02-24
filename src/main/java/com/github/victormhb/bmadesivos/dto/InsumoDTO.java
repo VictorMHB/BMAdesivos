@@ -1,6 +1,6 @@
 package com.github.victormhb.bmadesivos.dto;
 
-public record MaterialDTO(
+public record InsumoDTO(
         String nome,
         String unidadeMedida,
         Double estoqueAtual,

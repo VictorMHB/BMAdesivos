@@ -32,13 +32,17 @@ public class Funcionario implements UserDetails {
         ADMIN
     }
 
+    @Column(name = "ativo")
+    private boolean ativo = true;
+
     public Funcionario() {}
 
-    public Funcionario(String nome, String email, String senha, Cargo cargo) {
+    public Funcionario(String nome, String email, String senha, Cargo cargo, boolean ativo) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.cargo = cargo;
+        this.ativo = ativo;
     }
 
     // MÉTODOS UserDetails --------------------
@@ -118,5 +122,13 @@ public class Funcionario implements UserDetails {
 
     public void setCargo(Cargo cargo) {
         this.cargo = cargo;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
     }
 }

@@ -3,7 +3,7 @@ package com.github.victormhb.bmadesivos.service;
 import com.github.victormhb.bmadesivos.dto.OrdemProducaoDTO;
 import com.github.victormhb.bmadesivos.entity.*;
 import com.github.victormhb.bmadesivos.repository.FuncionarioRepository;
-import com.github.victormhb.bmadesivos.repository.MaterialRepository;
+import com.github.victormhb.bmadesivos.repository.InsumoRepository;
 import com.github.victormhb.bmadesivos.repository.OrdemProducaoRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -18,22 +18,22 @@ public class OrdemProducaoService {
     private final ProdutoService produtoService;
     private final FichaTecnicaService fichaTecnicaService;
     private final FuncionarioRepository funcionarioRepository;
-    private final MaterialService materialService;
+    private final InsumoService insumoService;
     private final MovimentacaoService movimentacaoService;
 
     public OrdemProducaoService(OrdemProducaoRepository ordemProducaoRepository,
                                 ProdutoService produtoService,
-                                MaterialRepository materialRepository,
+                                InsumoRepository insumoRepository,
                                 FichaTecnicaService fichaTecnicaService,
                                 FuncionarioRepository funcionarioRepository,
-                                MaterialService materialService,
+                                InsumoService insumoService,
                                 MovimentacaoService movimentacaoService)
     {
         this.ordemProducaoRepository = ordemProducaoRepository;
         this.produtoService = produtoService;
         this.fichaTecnicaService = fichaTecnicaService;
         this.funcionarioRepository = funcionarioRepository;
-        this.materialService = materialService;
+        this.insumoService = insumoService;
         this.movimentacaoService = movimentacaoService;
     }
 
@@ -86,7 +86,7 @@ public class OrdemProducaoService {
         for (FichaTecnica t: itensFicha) {
             Double qtdConsumida = t.getQtdNecessaria() * ordemProducao.getQuantidade();
 
-            materialService.baixarEstoque(t.getMaterial().getId(), qtdConsumida);
+            insumoService.baixarEstoque(t.getMaterial().getId(), qtdConsumida);
 
             MovimentacaoEstoque movMaterial = new MovimentacaoEstoque();
             movMaterial.setMaterial(t.getMaterial());

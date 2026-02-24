@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.SQLDelete;
 
 @Entity
-@Table(name = "materiais")
+@Table(name = "insumos")
 @SQLDelete(sql = "UPDATE materiais SET ativo = false WHERE id = ?")
-public class Material {
+public class Insumo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,11 +29,11 @@ public class Material {
     @Column(nullable = false)
     private boolean ativo = true;
 
-    public Material() {
+    public Insumo() {
 
     }
 
-    public Material(String nome, Double estoqueAtual, Double estoqueMinimo, String unidadeMedida, Double valorUnitario) {
+    public Insumo(String nome, Double estoqueAtual, Double estoqueMinimo, String unidadeMedida, Double valorUnitario) {
         this.nome = nome;
         this.estoqueAtual = estoqueAtual;
         this.estoqueMinimo = estoqueMinimo;

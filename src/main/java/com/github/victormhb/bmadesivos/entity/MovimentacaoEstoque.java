@@ -2,7 +2,6 @@ package com.github.victormhb.bmadesivos.entity;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,7 +12,7 @@ public class MovimentacaoEstoque {
 
     @ManyToOne
     @JoinColumn(name = "material_id")
-    private Material material;
+    private Insumo insumo;
 
     @ManyToOne
     @JoinColumn(name = "produto_id")
@@ -54,12 +53,12 @@ public class MovimentacaoEstoque {
         this.id = id;
     }
 
-    public Material getMaterial() {
-        return material;
+    public Insumo getMaterial() {
+        return insumo;
     }
 
-    public void setMaterial(Material material) {
-        this.material = material;
+    public void setMaterial(Insumo insumo) {
+        this.insumo = insumo;
     }
 
     public Produto getProduto() {

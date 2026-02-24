@@ -2,10 +2,10 @@ package com.github.victormhb.bmadesivos.service;
 
 import com.github.victormhb.bmadesivos.dto.FichaTecnicaDTO;
 import com.github.victormhb.bmadesivos.entity.FichaTecnica;
-import com.github.victormhb.bmadesivos.entity.Material;
+import com.github.victormhb.bmadesivos.entity.Insumo;
 import com.github.victormhb.bmadesivos.entity.Produto;
 import com.github.victormhb.bmadesivos.repository.FichaTecnicaRepository;
-import com.github.victormhb.bmadesivos.repository.MaterialRepository;
+import com.github.victormhb.bmadesivos.repository.InsumoRepository;
 import com.github.victormhb.bmadesivos.repository.ProdutoRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +18,17 @@ public class FichaTecnicaService {
 
     private final FichaTecnicaRepository fichaTecnicaRepository;
     private final ProdutoRepository produtoRepository;
-    private final MaterialRepository materialRepository;
+    private final InsumoRepository insumoRepository;
 
     @Autowired
     public FichaTecnicaService(
             FichaTecnicaRepository fichaTecnicaRepository,
             ProdutoRepository produtoRepository,
-            MaterialRepository materialRepository)
+            InsumoRepository insumoRepository)
     {
         this.fichaTecnicaRepository = fichaTecnicaRepository;
         this.produtoRepository = produtoRepository;
-        this.materialRepository = materialRepository;
+        this.insumoRepository = insumoRepository;
     }
 
     @Transactional
@@ -40,12 +40,12 @@ public class FichaTecnicaService {
         Produto produto = produtoRepository.findById(dto.produtoId())
                 .orElseThrow(() -> new Exception("Produto não encontrado."));
 
-        Material material = materialRepository.findById(dto.materialId())
+        Insumo insumo = insumoRepository.findById(dto.materialId())
                 .orElseThrow(() -> new Exception("Material não encontrado."));
 
         FichaTecnica item = new FichaTecnica();
         item.setProduto(produto);
-        item.setMaterial(material);
+        item.setMaterial(insumo);
         item.setQtdNecessaria(dto.qtdNecessaria());
         item.setAtivo(true);
 

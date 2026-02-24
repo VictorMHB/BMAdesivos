@@ -18,7 +18,7 @@ public class FichaTecnica {
 
     @ManyToOne
     @JoinColumn(name = "material_id", nullable = false)
-    private Material material;
+    private Insumo insumo;
 
     @Column(nullable = false)
     private Double qtdNecessaria;
@@ -44,12 +44,12 @@ public class FichaTecnica {
         this.produto = produto;
     }
 
-    public Material getMaterial() {
-        return material;
+    public Insumo getMaterial() {
+        return insumo;
     }
 
-    public void setMaterial(Material material) {
-        this.material = material;
+    public void setMaterial(Insumo insumo) {
+        this.insumo = insumo;
     }
 
     public Double getQtdNecessaria() {

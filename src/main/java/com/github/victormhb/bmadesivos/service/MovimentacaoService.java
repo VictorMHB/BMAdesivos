@@ -1,7 +1,7 @@
 package com.github.victormhb.bmadesivos.service;
 
 import com.github.victormhb.bmadesivos.dto.MovimentacaoDTO;
-import com.github.victormhb.bmadesivos.entity.Material;
+import com.github.victormhb.bmadesivos.entity.Insumo;
 import com.github.victormhb.bmadesivos.entity.MovimentacaoEstoque;
 import com.github.victormhb.bmadesivos.entity.Produto;
 import com.github.victormhb.bmadesivos.repository.MovimentacaoEstoqueRepository;
@@ -15,12 +15,12 @@ import java.util.List;
 public class MovimentacaoService {
 
     private final MovimentacaoEstoqueRepository movimentacaoRepository;
-    private final MaterialService materialService;
+    private final InsumoService insumoService;
     private final ProdutoService produtoService;
 
-    public MovimentacaoService(MovimentacaoEstoqueRepository movimentacaoRepository, MaterialService materialService, ProdutoService produtoService) {
+    public MovimentacaoService(MovimentacaoEstoqueRepository movimentacaoRepository, InsumoService insumoService, ProdutoService produtoService) {
         this.movimentacaoRepository = movimentacaoRepository;
-        this.materialService = materialService;
+        this.insumoService = insumoService;
         this.produtoService = produtoService;
     }
 
@@ -47,8 +47,8 @@ public class MovimentacaoService {
         movimentacaoEstoque.setObservacao(dto.observacao());
 
         if (dto.materialId() != null) {
-            Material material = materialService.buscarPorId(dto.materialId());
-            movimentacaoEstoque.setMaterial(material);
+            Insumo insumo = insumoService.buscarPorId(dto.materialId());
+            movimentacaoEstoque.setMaterial(insumo);
         } else if (dto.produtoId() != null) {
             Produto produto = produtoService.buscarPorId(dto.produtoId());
             movimentacaoEstoque.setProduto(produto);
