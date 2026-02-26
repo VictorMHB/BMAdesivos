@@ -20,8 +20,7 @@ public class Funcionario implements UserDetails {
     private String nome;
 
     @CPF(message = "CPF inválido")
-    @CNPJ(message = "CNPJ inválido")
-    private String cpfCnpj;
+    private String cpf;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -38,18 +37,22 @@ public class Funcionario implements UserDetails {
         ADMIN
     }
 
+    @Column(nullable = false)
+    private boolean trocarSenha = true;
+
     @Column(name = "ativo")
     private boolean ativo = true;
 
     public Funcionario() {}
 
-    public Funcionario(String nome, String email, String cpfCnpj, String senha, Cargo cargo, boolean ativo) {
+    public Funcionario(String nome, String email, String cpf, String senha, Cargo cargo, boolean ativo) {
         this.nome = nome;
-        this.cpfCnpj = cpfCnpj;
+        this.cpf = cpf;
         this.email = email;
         this.senha = senha;
         this.cargo = cargo;
-        this.ativo = ativo;
+        this.trocarSenha = true;
+        this.ativo = true;
     }
 
     // MÉTODOS UserDetails --------------------
@@ -107,12 +110,12 @@ public class Funcionario implements UserDetails {
         this.nome = nome;
     }
 
-    public String getCpfCnpj() {
-        return cpfCnpj;
+    public String getCpf() {
+        return cpf;
     }
 
-    public void setCpfCnpj(String cpfCnpj) {
-        this.cpfCnpj = cpfCnpj;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getEmail() {
@@ -137,6 +140,14 @@ public class Funcionario implements UserDetails {
 
     public void setCargo(Cargo cargo) {
         this.cargo = cargo;
+    }
+
+    public boolean isTrocarSenha() {
+        return trocarSenha;
+    }
+
+    public void setTrocarSenha(boolean trocarSenha) {
+        this.trocarSenha = trocarSenha;
     }
 
     public boolean isAtivo() {
