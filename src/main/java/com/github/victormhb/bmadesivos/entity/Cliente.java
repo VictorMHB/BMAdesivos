@@ -4,15 +4,10 @@ import br.com.caelum.stella.bean.validation.CNPJ;
 import br.com.caelum.stella.bean.validation.CPF;
 import jakarta.persistence.*;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
-import org.hibernate.annotations.Where;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "clientes")
 @SQLDelete(sql = "UPDATE clientes SET ativo = false WHERE id = ?")
-//@SQLRestriction("ativo = true")
 public class Cliente {
 
     @Id

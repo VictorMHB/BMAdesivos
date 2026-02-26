@@ -1,5 +1,7 @@
 package com.github.victormhb.bmadesivos.entity;
 
+import br.com.caelum.stella.bean.validation.CNPJ;
+import br.com.caelum.stella.bean.validation.CPF;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +18,10 @@ public class Funcionario implements UserDetails {
 
     @Column(nullable = false)
     private String nome;
+
+    @CPF(message = "CPF inválido")
+    @CNPJ(message = "CNPJ inválido")
+    private String cpfCnpj;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -37,8 +43,9 @@ public class Funcionario implements UserDetails {
 
     public Funcionario() {}
 
-    public Funcionario(String nome, String email, String senha, Cargo cargo, boolean ativo) {
+    public Funcionario(String nome, String email, String cpfCnpj, String senha, Cargo cargo, boolean ativo) {
         this.nome = nome;
+        this.cpfCnpj = cpfCnpj;
         this.email = email;
         this.senha = senha;
         this.cargo = cargo;
@@ -98,6 +105,14 @@ public class Funcionario implements UserDetails {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getCpfCnpj() {
+        return cpfCnpj;
+    }
+
+    public void setCpfCnpj(String cpfCnpj) {
+        this.cpfCnpj = cpfCnpj;
     }
 
     public String getEmail() {
