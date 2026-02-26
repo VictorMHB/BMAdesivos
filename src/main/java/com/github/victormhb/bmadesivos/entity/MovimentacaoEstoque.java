@@ -11,7 +11,7 @@ public class MovimentacaoEstoque {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "material_id")
+    @JoinColumn(name = "insumo_id")
     private Insumo insumo;
 
     @ManyToOne

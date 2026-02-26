@@ -33,20 +33,20 @@ public class FichaTecnicaService {
 
     @Transactional
     public FichaTecnica adicionarItem(FichaTecnicaDTO dto) throws Exception {
-        if (dto.qtdNecessaria() == null || dto.qtdNecessaria() <= 0) {
+        if (dto.quantidade() == null || dto.quantidade() <= 0) {
             throw new Exception("A quantidade necessária deve ser maior que zero.");
         }
 
         Produto produto = produtoRepository.findById(dto.produtoId())
                 .orElseThrow(() -> new Exception("Produto não encontrado."));
 
-        Insumo insumo = insumoRepository.findById(dto.materialId())
+        Insumo insumo = insumoRepository.findById(dto.insumoId())
                 .orElseThrow(() -> new Exception("Material não encontrado."));
 
         FichaTecnica item = new FichaTecnica();
         item.setProduto(produto);
-        item.setMaterial(insumo);
-        item.setQtdNecessaria(dto.qtdNecessaria());
+        item.setInsumo(insumo);
+        item.setQuantidade(dto.quantidade());
         item.setAtivo(true);
 
         return fichaTecnicaRepository.save(item);

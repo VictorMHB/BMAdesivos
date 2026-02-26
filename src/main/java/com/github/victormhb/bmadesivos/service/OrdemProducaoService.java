@@ -84,15 +84,15 @@ public class OrdemProducaoService {
         }
 
         for (FichaTecnica t: itensFicha) {
-            Double qtdConsumida = t.getQtdNecessaria() * ordemProducao.getQuantidade();
+            Double qtdConsumida = t.getQuantidade() * ordemProducao.getQuantidade();
 
-            insumoService.baixarEstoque(t.getMaterial().getId(), qtdConsumida);
+            insumoService.baixarEstoque(t.getInsumo().getId(), qtdConsumida);
 
             MovimentacaoEstoque movMaterial = new MovimentacaoEstoque();
-            movMaterial.setMaterial(t.getMaterial());
+            movMaterial.setMaterial(t.getInsumo());
             movMaterial.setQuantidade(-qtdConsumida);
             movMaterial.setTipo(MovimentacaoEstoque.TipoMovimentacao.SAIDA_MATERIAL);
-            movMaterial.setValorUnitario(t.getMaterial().getValorUnitario());
+            movMaterial.setValorUnitario(t.getInsumo().getValorUnitario());
             movMaterial.setObservacao("Consumo automático para Ordem de Produção #" + ordemProducao.getId());
 
             movimentacaoService.registar(movMaterial);
