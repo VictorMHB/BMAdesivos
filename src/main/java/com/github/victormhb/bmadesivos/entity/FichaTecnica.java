@@ -30,9 +30,6 @@ public class FichaTecnica {
     @Column
     private Double qtdResina;
 
-    @Column(nullable = false)
-    private Double valorUnitario;
-
     @ManyToOne
     @JoinColumn(name = "produto_id", nullable = false)
     private Produto produto;
@@ -106,14 +103,6 @@ public class FichaTecnica {
 
     public void setQtdResina(Double qtdResina) {
         this.qtdResina = qtdResina;
-    }
-
-    public Double getValorUnitario() {
-        return valorUnitario;
-    }
-
-    public void setValorUnitario(Double valorUnitario) {
-        this.valorUnitario = valorUnitario;
     }
 
     public Produto getProduto() {

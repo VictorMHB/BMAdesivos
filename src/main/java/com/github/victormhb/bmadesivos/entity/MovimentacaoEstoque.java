@@ -33,8 +33,8 @@ public class MovimentacaoEstoque {
     private String observacao;
 
     public enum TipoMovimentacao {
-        ENTRADA_MATERIAL,
-        SAIDA_MATERIAL,
+        ENTRADA_INSUMO,
+        SAIDA_INSUMO,
 
         ENTRADA_PRODUTO,
         SAIDA_PRODUTO,
@@ -53,11 +53,11 @@ public class MovimentacaoEstoque {
         this.id = id;
     }
 
-    public Insumo getMaterial() {
+    public Insumo getInsumo() {
         return insumo;
     }
 
-    public void setMaterial(Insumo insumo) {
+    public void setInsumo(Insumo insumo) {
         this.insumo = insumo;
     }
 

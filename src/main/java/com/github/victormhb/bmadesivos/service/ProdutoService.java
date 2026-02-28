@@ -36,7 +36,7 @@ public class ProdutoService {
             throw new Exception("O nome do produto é obrigatório.");
         }
 
-        if (dto.precoVenda() == null || dto.precoVenda() <= 0) {
+        if (dto.valorUnitario() == null || dto.valorUnitario() <= 0) {
             throw new Exception("O preço de venda deve ser maior que zero.");
         }
 
@@ -45,8 +45,8 @@ public class ProdutoService {
         Produto produto = new Produto();
         produto.setNome(dto.nome());
         produto.setDescricao(dto.descricao());
-        produto.setPrecoVenda(dto.precoVenda());
-        produto.setEstoqueAtual(dto.estoqueAtual() != null ? dto.estoqueAtual() : 0);
+        produto.setValorUnitario(dto.valorUnitario());
+        produto.setQuantidade(dto.quantidade() != null ? dto.quantidade() : 0);
         produto.setAtivo(true);
         produto.setCliente(cliente);
 
@@ -64,18 +64,18 @@ public class ProdutoService {
         if (dto.descricao() != null) {
             produto.setDescricao(dto.descricao());
         }
-        if (dto.precoVenda() != null && dto.precoVenda() > 0) {
-            produto.setPrecoVenda(dto.precoVenda());
+        if (dto.quantidade() != null && dto.quantidade() > 0) {
+            produto.setValorUnitario(dto.valorUnitario());
         }
-        if (dto.estoqueAtual() != null) {
-            produto.setEstoqueAtual(dto.estoqueAtual());
+        if (dto.quantidade() != null) {
+            produto.setQuantidade(dto.quantidade());
         }
 
         return produtoRepository.save(produto);
     }
 
     @Transactional
-    public void aumentarEstoque(Long id, Integer qtdProduzida) throws Exception {
+    public void aumentarQuantidade(Long id, Integer qtdProduzida) throws Exception {
         Produto produto = produtoRepository.findById(id)
                 .orElseThrow(() -> new Exception("Produto com ID: " + id + " não encontrado."));
 
@@ -83,7 +83,7 @@ public class ProdutoService {
             throw new Exception("A quantidade produzida deve ser positiva.");
         }
 
-        produto.setEstoqueAtual(produto.getEstoqueAtual() + qtdProduzida);
+        produto.setQuantidade(produto.getQuantidade() + qtdProduzida);
         produtoRepository.save(produto);
     }
 

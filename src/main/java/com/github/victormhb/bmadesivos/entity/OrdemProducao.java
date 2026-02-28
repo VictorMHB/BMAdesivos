@@ -27,7 +27,7 @@ public class OrdemProducao {
     private Cliente cliente;
 
     @Column(nullable = false)
-    private Integer quantidade;
+    private Integer qtdPedida;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -80,12 +80,12 @@ public class OrdemProducao {
         this.cliente = cliente;
     }
 
-    public Integer getQuantidade() {
-        return quantidade;
+    public Integer getQtdPedida() {
+        return qtdPedida;
     }
 
-    public void setQuantidade(Integer quantidade) {
-        this.quantidade = quantidade;
+    public void setQtdPedida(Integer qtdPedida) {
+        this.qtdPedida = qtdPedida;
     }
 
     public StatusOrdem getStatus() {

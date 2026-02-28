@@ -5,6 +5,7 @@ import com.github.victormhb.bmadesivos.entity.Funcionario;
 public class RegisterRequest {
     private String nome;
     private String email;
+    private String cpf;
     private String senha;
     private Funcionario.Cargo cargo;
 
@@ -22,6 +23,14 @@ public class RegisterRequest {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getSenha() {

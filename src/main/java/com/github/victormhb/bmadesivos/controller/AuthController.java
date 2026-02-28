@@ -64,6 +64,7 @@ public class AuthController {
         Funcionario novoFunc = new Funcionario(
                 request.getNome(),
                 request.getEmail(),
+                request.getCpf(),
                 passwordEncoder.encode(request.getSenha()),
                 request.getCargo()
         );

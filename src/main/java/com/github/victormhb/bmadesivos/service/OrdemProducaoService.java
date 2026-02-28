@@ -58,7 +58,7 @@ public class OrdemProducaoService {
         ordemProducao.setCliente(produto.getCliente());
 
         ordemProducao.setFuncionario(funcionario);
-        ordemProducao.setQuantidade(dto.quantidade());
+        ordemProducao.setQtdPedida(dto.qtdPedida());
         ordemProducao.setStatus(OrdemProducao.StatusOrdem.PENDENTE);
         ordemProducao.setDataAbertura(LocalDateTime.now());
         ordemProducao.setAtivo(true);
@@ -83,30 +83,27 @@ public class OrdemProducaoService {
             throw new Exception("Produto não possui uma Ficha Técnica cadastrada.");
         }
 
-        for (FichaTecnica t: itensFicha) {
-            Double qtdConsumida = t.getQuantidade() * ordemProducao.getQuantidade();
+        for (FichaTecnica ficha: itensFicha) {
+            Double areaAdesivo = (ficha.getAltura() * ficha.getComprimento()) / 10000;
 
-            insumoService.baixarEstoque(t.getInsumo().getId(), qtdConsumida);
+            double consumoSubstrato = ordemProducao.getQtdPedida() * areaAdesivo;
 
-            MovimentacaoEstoque movMaterial = new MovimentacaoEstoque();
-            movMaterial.setMaterial(t.getInsumo());
-            movMaterial.setQuantidade(-qtdConsumida);
-            movMaterial.setTipo(MovimentacaoEstoque.TipoMovimentacao.SAIDA_MATERIAL);
-            movMaterial.setValorUnitario(t.getInsumo().getValorUnitario());
-            movMaterial.setObservacao("Consumo automático para Ordem de Produção #" + ordemProducao.getId());
+            if (ficha.getTipoAdesivo() == FichaTecnica.TipoAdesivo.RESINADO && ficha.getQtdResina() != null) {
+                Double consumoResina =  ficha.getQtdResina() * ordemProducao.getQtdPedida();
+            }
 
-            movimentacaoService.registar(movMaterial);
+            produtoService.aumentarQuantidade(ordemProducao.getProduto().getId(), ordemProducao.getQtdPedida());
+
+            MovimentacaoEstoque movProducao = new MovimentacaoEstoque();
+            movProducao.setInsumo(ficha.getInsumo());
+            movProducao.setQuantidade(-consumoSubstrato);
+            movProducao.setValorUnitario(ordemProducao.getProduto().getValorUnitario());
+            movProducao.setTipo(MovimentacaoEstoque.TipoMovimentacao.SAIDA_PRODUTO);
+
+            movimentacaoService.registar(movProducao);
         }
 
-        produtoService.aumentarEstoque(ordemProducao.getProduto().getId(), ordemProducao.getQuantidade());
-
-        MovimentacaoEstoque movProducao = new MovimentacaoEstoque();
-        movProducao.setProduto(ordemProducao.getProduto());
-        movProducao.setQuantidade(ordemProducao.getId().doubleValue());
-        movProducao.setTipo(MovimentacaoEstoque.TipoMovimentacao.ENTRADA_PRODUTO);
-        movProducao.setValorUnitario(ordemProducao.getProduto().getPrecoVenda());
-
-        movimentacaoService.registar(movProducao);
+        produtoService.aumentarQuantidade(ordemProducao.getProduto().getId(), ordemProducao.getQtdPedida());
 
         ordemProducao.setStatus(OrdemProducao.StatusOrdem.CONCLUIDO);
         ordemProducao.setDataConclusao(LocalDateTime.now());

@@ -45,7 +45,7 @@ public class Funcionario implements UserDetails {
 
     public Funcionario() {}
 
-    public Funcionario(String nome, String email, String cpf, String senha, Cargo cargo, boolean ativo) {
+    public Funcionario(String nome, String email, String cpf, String senha, Cargo cargo) {
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;

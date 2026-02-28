@@ -18,10 +18,10 @@ public class Produto {
     private String descricao;
 
     @Column(nullable = false)
-    private Double precoVenda;
+    private Double valorUnitario;
 
     @Column(nullable = false)
-    private Integer estoqueAtual;
+    private Integer quantidade;
 
     @Column(nullable = false)
     private boolean ativo = true;
@@ -32,10 +32,11 @@ public class Produto {
 
     public Produto() {}
 
-    public Produto(String nome, String descricao, Double precoVenda) {
+    public Produto(String nome, String descricao, Double valorUnitario, Integer quantidade) {
         this.nome = nome;
         this.descricao = descricao;
-        this.precoVenda = precoVenda;
+        this.valorUnitario = valorUnitario;
+        this.quantidade = quantidade;
         this.ativo = true;
     }
 
@@ -63,20 +64,20 @@ public class Produto {
         this.descricao = descricao;
     }
 
-    public Double getPrecoVenda() {
-        return precoVenda;
+    public Double getValorUnitario() {
+        return valorUnitario;
     }
 
-    public void setPrecoVenda(Double precoVenda) {
-        this.precoVenda = precoVenda;
+    public void setValorUnitario(Double valorUnitario) {
+        this.valorUnitario = valorUnitario;
     }
 
-    public Integer getEstoqueAtual() {
-        return estoqueAtual;
+    public Integer getQuantidade() {
+        return quantidade;
     }
 
-    public void setEstoqueAtual(Integer estoqueAtual) {
-        this.estoqueAtual = estoqueAtual;
+    public void setQuantidade(Integer quantidade) {
+        this.quantidade = quantidade;
     }
 
     public boolean isAtivo() {

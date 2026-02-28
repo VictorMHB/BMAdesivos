@@ -28,7 +28,7 @@ public class FuncionarioService {
         this.passwordEncoder =  passwordEncoder;
     }
 
-    public List<Funcionario> listar(Long id) {
+    public List<Funcionario> listar() {
         Sort ordenacao = Sort.by(Sort.Direction.DESC, "ativo")
                 .and(Sort.by(Sort.Direction.ASC, "nome"));
 

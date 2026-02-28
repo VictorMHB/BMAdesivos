@@ -39,7 +39,7 @@ public class ClienteController {
     }
 
     @PostMapping("/novo")
-    public ResponseEntity<?> criarCliente(@RequestBody ClienteDTO dto) {
+    public ResponseEntity<?> cadastrarCliente(@RequestBody ClienteDTO dto) {
         try {
             clienteService.adicionarCliente(dto);
             return ResponseEntity.ok().build();
