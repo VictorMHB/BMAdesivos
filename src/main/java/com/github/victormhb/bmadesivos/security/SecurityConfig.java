@@ -55,12 +55,21 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(auth -> auth
+                        //Rotas Públicas
                         .requestMatchers("/auth/**").permitAll()
+
+                        //Permissão para alterar senha
+                        .requestMatchers(HttpMethod.PATCH, "/funcionarios/{id}/alterar-senha").hasAnyRole("ADMIN", "FUNCIONARIO")
+
+                        //Rotas de Operação
                         .requestMatchers("/clientes/**", "/producao/**", "/produtos/**", "/insumos/**")
                         .hasAnyRole("ADMIN", "FUNCIONARIO")
 
-                        .requestMatchers(HttpMethod.DELETE, "/funcionarios/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/funcionarios/novo").hasRole("ADMIN")
+                        //Rotas de Admin
+                        .requestMatchers("/funcionarios/todos").hasRole("ADMIN")
+                        .requestMatchers("/funcionarios/novo").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/funcionarios/apagar/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/funcionarios/editar/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 );
