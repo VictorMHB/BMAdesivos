@@ -48,7 +48,7 @@ public class MovimentacaoService {
 
         if (dto.materialId() != null) {
             Insumo insumo = insumoService.buscarPorId(dto.materialId());
-            movimentacaoEstoque.setMaterial(insumo);
+            movimentacaoEstoque.setInsumo(insumo);
         } else if (dto.produtoId() != null) {
             Produto produto = produtoService.buscarPorId(dto.produtoId());
             movimentacaoEstoque.setProduto(produto);

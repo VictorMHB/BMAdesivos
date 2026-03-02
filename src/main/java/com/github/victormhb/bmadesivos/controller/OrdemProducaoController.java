@@ -46,6 +46,7 @@ public class OrdemProducaoController {
         }
     }
 
+    @PatchMapping("/cancelar/{id}")
     public ResponseEntity<?> cancelarOrdem(@PathVariable Long id) {
         try {
             ordemProducaoService.cancelarOrdem(id);

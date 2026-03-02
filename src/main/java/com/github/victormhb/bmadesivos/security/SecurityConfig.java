@@ -55,19 +55,12 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login").permitAll()
-                        .requestMatchers("/auth/register").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/clientes/**", "/producao/**", "/produtos/**", "/insumos/**")
+                        .hasAnyRole("ADMIN", "FUNCIONARIO")
 
-                        .requestMatchers(HttpMethod.GET, "/clientes/todos").hasAnyRole("ADMIN", "FUNCIONARIO")
-                        .requestMatchers(HttpMethod.GET, "/clientes/{id}").hasAnyRole("ADMIN", "FUNCIONARIO")
-                        .requestMatchers(HttpMethod.POST, "/clientes/novo").hasAnyRole("ADMIN", "FUNCIONARIO")
-                        .requestMatchers(HttpMethod.PUT, "/clientes/editar").hasAnyRole("ADMIN", "FUNCIONARIO")
-                        .requestMatchers(HttpMethod.PATCH, "/clientes/editar/{id}").hasAnyRole("ADMIN", "FUNCIONARIO")
-                        .requestMatchers(HttpMethod.DELETE, "/clientes/apagar/{id}").hasAnyRole("ADMIN", "FUNCIONARIO")
-                        .requestMatchers("/materiais/**").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers("/produtos/**").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers("/fichas-tecnicas/**").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers("/producao/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/funcionarios/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/funcionarios/novo").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 );

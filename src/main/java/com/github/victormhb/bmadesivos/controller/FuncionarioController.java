@@ -2,6 +2,7 @@ package com.github.victormhb.bmadesivos.controller;
 
 import com.github.victormhb.bmadesivos.dto.funcionario.FuncionarioDTO;
 import com.github.victormhb.bmadesivos.dto.funcionario.FuncionarioUpdateDTO;
+import com.github.victormhb.bmadesivos.dto.funcionario.SenhaUpdateDTO;
 import com.github.victormhb.bmadesivos.entity.Funcionario;
 import com.github.victormhb.bmadesivos.service.FuncionarioService;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +53,16 @@ public class FuncionarioController {
             return ResponseEntity.ok(funcionarioAtualizado); //Retorna 200
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage()); //Retorna 404 Not Found
+        }
+    }
+
+    @PatchMapping("/{id}/alterar-senha")
+    public ResponseEntity<?> alterarSenha(@PathVariable Long id, @RequestBody SenhaUpdateDTO dto) {
+        try {
+            funcionarioService.alterarSenha(id, dto);
+            return ResponseEntity.ok("Senha alterada com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 

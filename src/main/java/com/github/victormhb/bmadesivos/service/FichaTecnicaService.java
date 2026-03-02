@@ -37,16 +37,31 @@ public class FichaTecnicaService {
             throw new Exception("A quantidade necessária deve ser maior que zero.");
         }
 
+        if (dto.altura() == 0 || dto.altura() <= 0 || dto.comprimento() == 0 || dto.comprimento() <= 0) {
+            throw new Exception("As dimensões devem ser maiores que zero");
+        }
+
         Produto produto = produtoRepository.findById(dto.produtoId())
                 .orElseThrow(() -> new Exception("Produto não encontrado."));
 
         Insumo insumo = insumoRepository.findById(dto.insumoId())
                 .orElseThrow(() -> new Exception("Material não encontrado."));
 
+        if (dto.valorUnitario() != null && dto.valorUnitario() > 0) {
+            produto.setValorUnitario(dto.valorUnitario());
+            produtoRepository.save(produto);
+        }
+
         FichaTecnica item = new FichaTecnica();
         item.setProduto(produto);
         item.setInsumo(insumo);
+
         item.setQuantidade(dto.quantidade());
+        item.setSubstrato(dto.substrato());
+        item.setAltura(dto.altura());
+        item.setComprimento(dto.comprimento());
+        item.setTipoAdesivo(dto.tipoAdesivo());
+        item.setQtdResina(dto.qtdResina());
         item.setAtivo(true);
 
         return fichaTecnicaRepository.save(item);

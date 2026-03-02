@@ -90,20 +90,33 @@ public class OrdemProducaoService {
 
             if (ficha.getTipoAdesivo() == FichaTecnica.TipoAdesivo.RESINADO && ficha.getQtdResina() != null) {
                 Double consumoResina =  ficha.getQtdResina() * ordemProducao.getQtdPedida();
+
+                //TODO implementar baixa da resina
             }
 
-            produtoService.aumentarQuantidade(ordemProducao.getProduto().getId(), ordemProducao.getQtdPedida());
+            insumoService.baixarEstoque(ficha.getInsumo().getId(), consumoSubstrato);
 
-            MovimentacaoEstoque movProducao = new MovimentacaoEstoque();
-            movProducao.setInsumo(ficha.getInsumo());
-            movProducao.setQuantidade(-consumoSubstrato);
-            movProducao.setValorUnitario(ordemProducao.getProduto().getValorUnitario());
-            movProducao.setTipo(MovimentacaoEstoque.TipoMovimentacao.SAIDA_PRODUTO);
+            MovimentacaoEstoque movInsumo = new MovimentacaoEstoque();
+            movInsumo.setInsumo(ficha.getInsumo());
+            movInsumo.setQuantidade(-consumoSubstrato);
+            movInsumo.setValorUnitario(ordemProducao.getProduto().getValorUnitario());
+            movInsumo.setTipo(MovimentacaoEstoque.TipoMovimentacao.SAIDA_INSUMO);
+            movInsumo.setObservacao("Consumo automático para Ordem de Produção #" + ordemProducao.getId());
 
-            movimentacaoService.registar(movProducao);
+            movimentacaoService.registar(movInsumo);
         }
 
+        Double precoVenda = ordemProducao.getProduto().getValorUnitario();
+
         produtoService.aumentarQuantidade(ordemProducao.getProduto().getId(), ordemProducao.getQtdPedida());
+
+        MovimentacaoEstoque movProduto = new MovimentacaoEstoque();
+        movProduto.setProduto(ordemProducao.getProduto());
+        movProduto.setQuantidade(ordemProducao.getQtdPedida().doubleValue());
+        movProduto.setTipo(MovimentacaoEstoque.TipoMovimentacao.ENTRADA_PRODUTO);
+        movProduto.setValorUnitario(precoVenda);
+
+        movimentacaoService.registar(movProduto);
 
         ordemProducao.setStatus(OrdemProducao.StatusOrdem.CONCLUIDO);
         ordemProducao.setDataConclusao(LocalDateTime.now());

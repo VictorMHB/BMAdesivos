@@ -1,5 +1,6 @@
 package com.github.victormhb.bmadesivos.security;
 
+import com.github.victormhb.bmadesivos.entity.Funcionario;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,6 +51,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 UserDetails userDetails = this.autenticacaoService.loadUserByUsername(userEmail);
 
                 if (jwtUtil.validateToken(jwt, userDetails)) {
+                    if (userDetails instanceof Funcionario funcionario) {
+                        String path = request.getRequestURI();
+
+                        if (funcionario.isTrocarSenha() && !path.contains("/alterar-senha")) {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setCharacterEncoding("UTF-8");
+                            response.getWriter().write("Acesso bloqueado: Alteração de senha necessária.");
+                            return;
+                        }
+                    }
+
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,

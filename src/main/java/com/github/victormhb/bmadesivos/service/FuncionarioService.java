@@ -4,6 +4,7 @@ import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
 import com.github.victormhb.bmadesivos.dto.funcionario.FuncionarioDTO;
 import com.github.victormhb.bmadesivos.dto.funcionario.FuncionarioUpdateDTO;
+import com.github.victormhb.bmadesivos.dto.funcionario.SenhaUpdateDTO;
 import com.github.victormhb.bmadesivos.entity.Funcionario;
 import com.github.victormhb.bmadesivos.repository.FuncionarioRepository;
 import org.passay.CharacterRule;
@@ -82,22 +83,25 @@ public class FuncionarioService {
             funcionario.setCpf(dto.getCpf());
         }
 
-        if (dto.getNovaSenha() != null) {
-            if (!funcionario.isTrocarSenha()) {
-                if (dto.getSenhaAtual() == null || !passwordEncoder.matches(dto.getSenhaAtual(), funcionario.getSenha())) {
-                    throw new Exception("Senha atual incorreta.");
-                }
-            }
+        return funcionarioRepository.save(funcionario);
+    }
 
-            if (dto.getNovaSenha().length() < 8) {
-                throw new Exception("Senha deve ter no minimo 8 caracteres.");
-            }
+    @Transactional
+    public void alterarSenha(Long id, SenhaUpdateDTO dto) throws Exception {
+        Funcionario funcionario = buscarPorId(id);
 
-            funcionario.setSenha(passwordEncoder.encode(dto.getNovaSenha()));
-            funcionario.setTrocarSenha(false);
+        if (dto.senhaAtual() == null || !passwordEncoder.matches(dto.senhaAtual(), funcionario.getSenha())) {
+            throw new Exception("Senha atual incorreta.");
         }
 
-        return funcionarioRepository.save(funcionario);
+        if (dto.novaSenha() == null || dto.novaSenha().length() < 8) {
+            throw new Exception("A nova senha deve ter no mínimo 8 caracteres.");
+        }
+
+        funcionario.setSenha(passwordEncoder.encode(dto.novaSenha()));
+        funcionario.setTrocarSenha(false);
+
+        funcionarioRepository.save(funcionario);
     }
 
     @Transactional
