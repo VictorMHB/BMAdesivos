@@ -75,6 +75,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             System.out.println("Erro ao processar o autenticacao: " + e.getMessage());
+            SecurityContextHolder.clearContext();
         }
 
 
