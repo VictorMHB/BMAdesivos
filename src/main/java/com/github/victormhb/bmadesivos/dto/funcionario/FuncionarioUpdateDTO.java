@@ -1,12 +1,11 @@
 package com.github.victormhb.bmadesivos.dto.funcionario;
 
-
-
 public class FuncionarioUpdateDTO {
 
     private String nome;
     private String cpf;
     private String email;
+    private Boolean ativo;
 
     public FuncionarioUpdateDTO() {
     }
@@ -33,5 +32,13 @@ public class FuncionarioUpdateDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
     }
 }

@@ -52,6 +52,7 @@ public class AuthController {
 
         return ResponseEntity.ok(
                 new LoginResponse(
+                        funcionario.getId(),
                         token,
                         funcionario.getNome(),
                         funcionario.getCargo().name(),

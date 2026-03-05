@@ -55,6 +55,7 @@ public class FuncionarioService {
         funcionario.setNome(dto.nome());
         funcionario.setCpf(dto.cpf());
         funcionario.setEmail(dto.email());
+        funcionario.setCargo(dto.cargo());
         funcionario.setAtivo(true);
         funcionario.setTrocarSenha(true);
 
@@ -81,6 +82,10 @@ public class FuncionarioService {
         if (dto.getCpf() != null && !dto.getCpf().isEmpty()) {
             validarCpf(dto.getCpf());
             funcionario.setCpf(dto.getCpf());
+        }
+
+        if (dto.getAtivo() != null) {
+            funcionario.setAtivo(dto.getAtivo());
         }
 
         return funcionarioRepository.save(funcionario);
