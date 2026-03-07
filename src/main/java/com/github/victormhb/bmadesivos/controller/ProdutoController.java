@@ -22,7 +22,7 @@ public class ProdutoController {
 
     @GetMapping
     public List<Produto> listar() {
-        return produtoService.listarProdutos();
+        return produtoService.listar();
     }
 
     @GetMapping("/{id}")
@@ -38,7 +38,7 @@ public class ProdutoController {
     @PostMapping("/novo")
     public ResponseEntity<?> criar(@RequestBody ProdutoDTO dto){
         try {
-            Produto novoProduto = produtoService.salvar(dto);
+            Produto novoProduto = produtoService.adicionarProduto(dto);
             return ResponseEntity.ok(novoProduto);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

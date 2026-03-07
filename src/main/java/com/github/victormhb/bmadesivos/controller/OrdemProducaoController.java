@@ -22,8 +22,8 @@ public class OrdemProducaoController {
     }
 
     @GetMapping("/todas")
-    public List<OrdemProducao> listarTodas() {
-        return ordemProducaoService.listarTodas();
+    public List<OrdemProducao> listar() {
+        return ordemProducaoService.listar();
     }
 
     @PostMapping("/abrir")

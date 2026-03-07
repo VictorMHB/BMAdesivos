@@ -75,7 +75,7 @@ public class FichaTecnicaService {
     }
 
     @Transactional
-    public void removerItem(Long id) throws Exception {
+    public void deletarItem(Long id) throws Exception {
         FichaTecnica item = fichaTecnicaRepository.findById(id)
                 .orElseThrow(() -> new Exception("Item da ficha técnica não encontrado."));
 

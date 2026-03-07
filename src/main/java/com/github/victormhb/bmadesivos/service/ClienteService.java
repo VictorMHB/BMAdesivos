@@ -120,7 +120,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public void deletarPorId(Long id) throws Exception {
+    public void deletarCliente(Long id) throws Exception {
         Cliente cliente = buscarPorId(id);
         cliente.setAtivo(false);
         clienteRepository.save(cliente);

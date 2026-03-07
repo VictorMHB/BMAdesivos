@@ -12,7 +12,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/funcionarios")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173",
+        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.OPTIONS})
 public class FuncionarioController {
 
     private final FuncionarioService funcionarioService;
@@ -69,7 +70,7 @@ public class FuncionarioController {
     @DeleteMapping("apagar/{id}")
     public ResponseEntity<?> deletarFuncionario(@PathVariable Long id) {
         try {
-            funcionarioService.deletarPorId(id);
+            funcionarioService.deletarFuncionario(id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

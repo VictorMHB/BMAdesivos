@@ -110,7 +110,7 @@ public class FuncionarioService {
     }
 
     @Transactional
-    public void deletarPorId(Long id) throws Exception {
+    public void deletarFuncionario(Long id) throws Exception {
         Funcionario funcionario = buscarPorId(id);
         funcionario.setAtivo(false);
 

@@ -21,7 +21,7 @@ public class ProdutoService {
         this.clienteService = clienteService;
     }
 
-    public List<Produto> listarProdutos(){
+    public List<Produto> listar(){
         return produtoRepository.findAll(Sort.by(Sort.Direction.ASC, "nome"));
     }
 
@@ -31,7 +31,7 @@ public class ProdutoService {
     }
 
     @Transactional
-    public Produto salvar(ProdutoDTO dto) throws Exception {
+    public Produto adicionarProduto(ProdutoDTO dto) throws Exception {
         if (dto.nome() == null || dto.nome().trim().isBlank()){
             throw new Exception("O nome do produto é obrigatório.");
         }
@@ -54,7 +54,7 @@ public class ProdutoService {
     }
 
     @Transactional
-    public Produto atualizar(Long id, ProdutoDTO dto) throws Exception {
+    public Produto atualizarProduto(Long id, ProdutoDTO dto) throws Exception {
         Produto produto = produtoRepository.findById(id)
                 .orElseThrow(() -> new Exception("Produto com ID: " + id + " não encontrado."));
 
@@ -88,7 +88,7 @@ public class ProdutoService {
     }
 
     @Transactional
-    public void deletar(Long id) throws Exception {
+    public void deletarProduto(Long id) throws Exception {
         Produto produto = produtoRepository.findById(id)
                 .orElseThrow(() -> new Exception("Produto não encontrado."));
 

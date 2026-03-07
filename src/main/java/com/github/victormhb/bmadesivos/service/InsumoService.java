@@ -1,6 +1,7 @@
 package com.github.victormhb.bmadesivos.service;
 
-import com.github.victormhb.bmadesivos.dto.InsumoDTO;
+import com.github.victormhb.bmadesivos.dto.insumo.InsumoDTO;
+import com.github.victormhb.bmadesivos.dto.insumo.InsumoUpdateDTO;
 import com.github.victormhb.bmadesivos.entity.Insumo;
 import com.github.victormhb.bmadesivos.repository.InsumoRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +21,7 @@ public class InsumoService {
         this.insumoRepository = insumoRepository;
     }
 
-    public List<Insumo> listarTodos() {
+    public List<Insumo> listar() {
         return insumoRepository.findAll(Sort.by(Sort.Direction.ASC, "nome"));
     }
 
@@ -30,7 +31,7 @@ public class InsumoService {
     }
 
     @Transactional
-    public Insumo salvar(InsumoDTO dto) throws Exception {
+    public Insumo adicionarInsumo(InsumoDTO dto) throws Exception {
         if (dto.nome() == null || dto.nome().trim().isEmpty()) {
             throw new Exception("O nome do material é obrigatório.");
         }
@@ -47,24 +48,28 @@ public class InsumoService {
     }
 
     @Transactional
-    public Insumo atualizar(Long id, InsumoDTO dto) throws Exception {
+    public Insumo atualizarInsumo(Long id, InsumoUpdateDTO dto) throws Exception {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new Exception("Material com ID " + id + " não foi encontrado"));
 
-        if (dto.nome() != null && !dto.nome().trim().isEmpty()) {
-            insumo.setNome(dto.nome());
+        if (dto.getNome() != null && !dto.getNome().trim().isEmpty()) {
+            insumo.setNome(dto.getNome());
         }
-        if (dto.unidadeMedida() != null) {
-            insumo.setUnidadeMedida(dto.unidadeMedida());
+        if (dto.getUnidadeMedida() != null) {
+            insumo.setUnidadeMedida(dto.getUnidadeMedida());
         }
-        if (dto.estoqueAtual() != null) {
-            insumo.setEstoqueAtual(dto.estoqueAtual());
+        if (dto.getEstoqueAtual() != null) {
+            insumo.setEstoqueAtual(dto.getEstoqueAtual());
         }
-        if (dto.estoqueMinimo() != null) {
-            insumo.setEstoqueMinimo(dto.estoqueMinimo());
+        if (dto.getEstoqueMinimo() != null) {
+            insumo.setEstoqueMinimo(dto.getEstoqueMinimo());
         }
-        if (dto.valorUnitario() != null) {
-            insumo.setValorUnitario(dto.valorUnitario());
+        if (dto.getValorUnitario() != null) {
+            insumo.setValorUnitario(dto.getValorUnitario());
+        }
+
+        if (dto.getAtivo() != null) {
+            insumo.setAtivo(dto.getAtivo());
         }
 
         return insumoRepository.save(insumo);
@@ -88,7 +93,7 @@ public class InsumoService {
     }
 
     @Transactional
-    public void deletar(Long id) throws Exception {
+    public void deletarInsumo(Long id) throws Exception {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new Exception("Material não encontrado"));
 

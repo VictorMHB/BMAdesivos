@@ -61,7 +61,7 @@ public class ClienteController {
     @DeleteMapping("apagar/{id}")
     public ResponseEntity<?> deletarCliente(@PathVariable Long id) {
         try {
-            clienteService.deletarPorId(id);
+            clienteService.deletarCliente(id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

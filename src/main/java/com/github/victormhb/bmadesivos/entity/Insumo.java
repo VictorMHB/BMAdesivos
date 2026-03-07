@@ -5,7 +5,7 @@ import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Table(name = "insumos")
-@SQLDelete(sql = "UPDATE materiais SET ativo = false WHERE id = ?")
+@SQLDelete(sql = "UPDATE insumos SET ativo = false WHERE id = ?")
 public class Insumo {
 
     @Id

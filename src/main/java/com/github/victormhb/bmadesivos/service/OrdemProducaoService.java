@@ -37,7 +37,7 @@ public class OrdemProducaoService {
         this.movimentacaoService = movimentacaoService;
     }
 
-    public List<OrdemProducao> listarTodas() {
+    public List<OrdemProducao> listar() {
         return ordemProducaoRepository.findAll();
     }
 

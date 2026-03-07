@@ -1,6 +1,7 @@
 package com.github.victormhb.bmadesivos.controller;
 
-import com.github.victormhb.bmadesivos.dto.InsumoDTO;
+import com.github.victormhb.bmadesivos.dto.insumo.InsumoDTO;
+import com.github.victormhb.bmadesivos.dto.insumo.InsumoUpdateDTO;
 import com.github.victormhb.bmadesivos.entity.Insumo;
 import com.github.victormhb.bmadesivos.service.InsumoService;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/insumos")
+@CrossOrigin(origins = "http://localhost:5173",
+        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.OPTIONS})
 public class InsumoController {
 
     private final InsumoService insumoService;
@@ -20,7 +23,7 @@ public class InsumoController {
 
     @GetMapping
     public List<Insumo> listar() {
-        return insumoService.listarTodos();
+        return insumoService.listar();
     }
 
     @GetMapping("/{id}")
@@ -34,18 +37,28 @@ public class InsumoController {
     }
 
     @PostMapping("/novo")
-    public ResponseEntity<?> criar(@RequestBody InsumoDTO dto) {
+    public ResponseEntity<?> adicionarInsumo(@RequestBody InsumoDTO dto) {
         try {
-            return ResponseEntity.ok(insumoService.salvar(dto));
+            return ResponseEntity.ok(insumoService.adicionarInsumo(dto));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @PutMapping("/editar/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody InsumoDTO dto) {
+    @PatchMapping("/editar/{id}")
+    public ResponseEntity<?> atualizarInsumo(@PathVariable Long id, @RequestBody InsumoUpdateDTO dto) {
         try {
-            return ResponseEntity.ok(insumoService.atualizar(id, dto));
+            return ResponseEntity.ok(insumoService.atualizarInsumo(id, dto));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/apagar/{id}")
+    public ResponseEntity<?> deletarInsumo(@PathVariable Long id) {
+        try{
+            insumoService.deletarInsumo(id);
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
