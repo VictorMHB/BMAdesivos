@@ -32,8 +32,18 @@ public class ProdutoService {
 
     @Transactional
     public Produto adicionarProduto(ProdutoDTO dto) throws Exception {
-        if (dto.nome() == null || dto.nome().trim().isBlank()){
+        if (dto.nome() == null || dto.nome().trim().isEmpty()) {
             throw new Exception("O nome do produto é obrigatório.");
+        }
+
+        String nomeTratado = dto.nome().trim();
+
+        if (nomeTratado.length() < 3) {
+            throw new Exception("Nome deve ter no mínimo 3 caracteres.");
+        }
+
+        if (!nomeTratado.matches("[\\p{L}0-9 ]+")) {
+            throw new Exception("Nome contém caracteres inválidos.");
         }
 
         if (dto.valorUnitario() == null || dto.valorUnitario() <= 0) {
@@ -43,8 +53,8 @@ public class ProdutoService {
         Cliente cliente = clienteService.buscarPorId(dto.clienteId());
 
         Produto produto = new Produto();
-        produto.setNome(dto.nome());
-        produto.setDescricao(dto.descricao());
+        produto.setNome(nomeTratado);
+        produto.setDescricao(dto.descricao() != null ? dto.descricao().trim() : null);
         produto.setValorUnitario(dto.valorUnitario());
         produto.setQuantidade(dto.quantidade() != null ? dto.quantidade() : 0);
         produto.setAtivo(true);
@@ -58,8 +68,18 @@ public class ProdutoService {
         Produto produto = produtoRepository.findById(id)
                 .orElseThrow(() -> new Exception("Produto com ID: " + id + " não encontrado."));
 
-        if (dto.nome() != null && !dto.nome().trim().isBlank()) {
-            produto.setNome(dto.nome());
+        if (dto.nome() != null && !dto.nome().trim().isEmpty()) {
+            String nomeTratado = dto.nome().trim();
+
+            if (nomeTratado.length() < 3) {
+                throw new Exception("Nome deve ter no mínimo 3 caracteres.");
+            }
+
+            if (!nomeTratado.matches("[\\p{L}0-9 ]+")) {
+                throw new Exception("Nome contém caracteres inválidos.");
+            }
+
+            produto.setNome(nomeTratado);
         }
         if (dto.descricao() != null) {
             produto.setDescricao(dto.descricao());

@@ -36,9 +36,19 @@ public class InsumoService {
             throw new Exception("O nome do material é obrigatório.");
         }
 
+        String nomeTratado = dto.nome().trim();
+
+        if (nomeTratado.length() < 3) {
+            throw new Exception("Nome deve ter no mínimo 3 caracteres.");
+        }
+
+        if (!nomeTratado.matches("[\\p{L}0-9 ]+")) {
+            throw new Exception("Nome contém caracteres inválidos.");
+        }
+
         Insumo insumo = new Insumo();
-        insumo.setNome(dto.nome());
-        insumo.setUnidadeMedida(dto.unidadeMedida());
+        insumo.setNome(nomeTratado);
+        insumo.setUnidadeMedida(dto.unidadeMedida() != null ? dto.unidadeMedida().trim() : null);
         insumo.setEstoqueAtual(dto.estoqueAtual() != null ? dto.estoqueAtual() : 0.0);
         insumo.setEstoqueMinimo(dto.estoqueMinimo() != null ? dto.estoqueMinimo() : 0.0);
         insumo.setValorUnitario(dto.valorUnitario() != null ? dto.valorUnitario() : 0.0);
@@ -53,8 +63,19 @@ public class InsumoService {
                 .orElseThrow(() -> new Exception("Material com ID " + id + " não foi encontrado"));
 
         if (dto.getNome() != null && !dto.getNome().trim().isEmpty()) {
-            insumo.setNome(dto.getNome());
+            String nomeTratado = dto.getNome().trim();
+
+            if (nomeTratado.length() < 3) {
+                throw new Exception("Nome deve ter no mínimo 3 caracteres.");
+            }
+
+            if (!nomeTratado.matches("[\\p{L}0-9 ]+")) {
+                throw new Exception("Nome contém caracteres inválidos.");
+            }
+
+            insumo.setNome(nomeTratado);
         }
+
         if (dto.getUnidadeMedida() != null) {
             insumo.setUnidadeMedida(dto.getUnidadeMedida());
         }

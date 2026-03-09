@@ -43,8 +43,18 @@ public class FuncionarioService {
 
     @Transactional
     public String adicionarFuncionario(FuncionarioDTO dto) throws Exception {
-        if (dto.nome() == null || dto.nome().isEmpty()) {
+        if (dto.nome() == null || dto.nome().trim().isEmpty()) {
             throw new Exception("Nome não pode ser vazio");
+        }
+
+        String nomeTratado = dto.nome().trim();
+
+        if (nomeTratado.length() < 3) {
+            throw new Exception("Nome deve ter no mínimo 3 caracteres.");
+        }
+
+        if (!nomeTratado.matches("[\\p{L} ]+")) {
+            throw new Exception("Nome deve conter apenas letras.");
         }
 
         validarCpf(dto.cpf());
@@ -52,9 +62,9 @@ public class FuncionarioService {
         String senhaTemp = gerarSenhaTemp();
 
         Funcionario funcionario = new Funcionario();
-        funcionario.setNome(dto.nome());
-        funcionario.setCpf(dto.cpf());
-        funcionario.setEmail(dto.email());
+        funcionario.setNome(nomeTratado);
+        funcionario.setCpf(dto.cpf() != null ? dto.cpf().trim() : null);
+        funcionario.setEmail(dto.email() != null ? dto.email().trim() : null);
         funcionario.setCargo(dto.cargo());
         funcionario.setAtivo(true);
         funcionario.setTrocarSenha(true);
@@ -71,17 +81,27 @@ public class FuncionarioService {
     public Funcionario atualizarFuncionario(Long id, FuncionarioUpdateDTO dto) throws Exception {
         Funcionario funcionario = buscarPorId(id);
 
-        if (dto.getNome() != null && !dto.getNome().isEmpty()) {
-            funcionario.setNome(dto.getNome());
+        if (dto.getNome() != null && !dto.getNome().trim().isEmpty()) {
+            String nomeTratado = dto.getNome().trim();
+
+            if (nomeTratado.length() < 3) {
+                throw new Exception("Nome deve ter no mínimo 3 caracteres.");
+            }
+
+            if (!nomeTratado.matches("[\\p{L} ]+")) {
+                throw new Exception("Nome deve conter apenas letras.");
+            }
+
+            funcionario.setNome(nomeTratado);
         }
 
         if (dto.getEmail() != null) {
-            funcionario.setEmail(dto.getEmail());
+            funcionario.setEmail(dto.getEmail().trim());
         }
 
-        if (dto.getCpf() != null && !dto.getCpf().isEmpty()) {
-            validarCpf(dto.getCpf());
-            funcionario.setCpf(dto.getCpf());
+        if (dto.getCpf() != null && !dto.getCpf().trim().isEmpty()) {
+            validarCpf(dto.getCpf().trim());
+            funcionario.setCpf(dto.getCpf().trim());
         }
 
         if (dto.getAtivo() != null) {

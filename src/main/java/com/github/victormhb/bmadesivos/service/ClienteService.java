@@ -43,27 +43,37 @@ public class ClienteService {
 
     @Transactional
     public void adicionarCliente(ClienteDTO dto) throws Exception {
-        if (dto.nome() == null || dto.nome().isEmpty()) {
+        if (dto.nome() == null || dto.nome().trim().isEmpty()) {
             throw new Exception("Nome não pode ser vazio");
+        }
+
+        String nomeTratado = dto.nome().trim();
+
+        if (nomeTratado.length() < 3) {
+            throw new Exception("Nome deve ter no mínimo 3 caracteres.");
+        }
+
+        if (!nomeTratado.matches("[\\p{L}0-9 ]+")) {
+            throw new Exception("Nome contém caracteres inválidos.");
         }
 
         validarCpfCnpj(dto.cpfCnpj());
 
         Cliente cliente = new Cliente();
-        cliente.setNome(dto.nome());
-        cliente.setCpfCnpj(dto.cpfCnpj());
-        cliente.setEmail(dto.email());
-        cliente.setTelefone(dto.telefone());
+        cliente.setNome(nomeTratado);
+        cliente.setCpfCnpj(dto.cpfCnpj() != null ? dto.cpfCnpj().trim() : null);
+        cliente.setEmail(dto.email() != null ? dto.email().trim() : null);
+        cliente.setTelefone(dto.telefone() != null ? dto.telefone().trim() : null);
         cliente.setAtivo(true);
 
         if (dto.endereco() != null) {
             Endereco endereco = new Endereco();
-            endereco.setRua(dto.endereco().rua());
+            endereco.setRua(dto.endereco().rua() != null ? dto.endereco().rua().trim() : null);
             endereco.setNumero(dto.endereco().numero());
-            endereco.setBairro(dto.endereco().bairro());
-            endereco.setCidade(dto.endereco().cidade());
-            endereco.setEstado(dto.endereco().estado());
-            endereco.setCep(dto.endereco().cep());
+            endereco.setBairro(dto.endereco().bairro() != null ? dto.endereco().bairro().trim() : null);
+            endereco.setCidade(dto.endereco().cidade() != null ? dto.endereco().cidade().trim() : null);
+            endereco.setEstado(dto.endereco().estado() != null ? dto.endereco().estado().trim() : null);
+            endereco.setCep(dto.endereco().cep() != null ? dto.endereco().cep().trim() : null);
             cliente.setEndereco(endereco);
         }
 
@@ -74,32 +84,42 @@ public class ClienteService {
     public Cliente atualizarCliente(Long id, ClienteUpdateDTO dto) throws Exception {
         Cliente cliente = buscarPorId(id);
 
-        if (dto.getNome() != null && !dto.getNome().isEmpty()) {
-            cliente.setNome(dto.getNome());
+        if (dto.getNome() != null && !dto.getNome().trim().isEmpty()) {
+            String nomeTratado = dto.getNome().trim();
+
+            if (nomeTratado.length() < 3) {
+                throw new Exception("Nome deve ter no mínimo 3 caracteres.");
+            }
+
+            if (!nomeTratado.matches("[\\p{L}0-9 ]+")) {
+                throw new Exception("Nome contém caracteres inválidos.");
+            }
+
+            cliente.setNome(nomeTratado);
         }
 
         if (dto.getEmail() != null) {
-            cliente.setEmail(dto.getEmail());
+            cliente.setEmail(dto.getEmail().trim());
         }
 
         if (dto.getCpfCnpj() != null && !dto.getCpfCnpj().isEmpty()) {
-            validarCpfCnpj(dto.getCpfCnpj());
-            cliente.setCpfCnpj(dto.getCpfCnpj());
+            validarCpfCnpj(dto.getCpfCnpj().trim());
+            cliente.setCpfCnpj(dto.getCpfCnpj().trim());
         }
 
         if (dto.getTelefone() != null && !dto.getTelefone().isEmpty()) {
-            cliente.setTelefone(dto.getTelefone());
+            cliente.setTelefone(dto.getTelefone().trim());
         }
 
         if (dto.getEndereco() != null) {
             Endereco endereco = cliente.getEndereco() != null ? cliente.getEndereco() : new Endereco();
 
-            if (dto.getEndereco().rua() != null) { endereco.setRua(dto.getEndereco().rua()); }
+            if (dto.getEndereco().rua() != null) { endereco.setRua(dto.getEndereco().rua().trim()); }
             if (dto.getEndereco().numero() != null) { endereco.setNumero(dto.getEndereco().numero()); }
-            if (dto.getEndereco().bairro() != null) { endereco.setBairro(dto.getEndereco().bairro()); }
-            if (dto.getEndereco().cidade() != null) { endereco.setCidade(dto.getEndereco().cidade()); }
-            if (dto.getEndereco().estado() != null) { endereco.setEstado(dto.getEndereco().estado()); }
-            if (dto.getEndereco().cep() != null) { endereco.setCep(dto.getEndereco().cep()); }
+            if (dto.getEndereco().bairro() != null) { endereco.setBairro(dto.getEndereco().bairro().trim()); }
+            if (dto.getEndereco().cidade() != null) { endereco.setCidade(dto.getEndereco().cidade().trim()); }
+            if (dto.getEndereco().estado() != null) { endereco.setEstado(dto.getEndereco().estado().trim()); }
+            if (dto.getEndereco().cep() != null) { endereco.setCep(dto.getEndereco().cep().trim()); }
 
             cliente.setEndereco(endereco);
         }
