@@ -15,8 +15,8 @@ public class OrdemProducao {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "produto_id", nullable = false)
-    private Adesivo produto;
+    @JoinColumn(name = "adesivo_id", nullable = false)
+    private Adesivo adesivo;
 
     @ManyToOne
     @JoinColumn(name = "funcionario_id", nullable = false)
@@ -56,12 +56,12 @@ public class OrdemProducao {
         this.id = id;
     }
 
-    public Adesivo getProduto() {
-        return produto;
+    public Adesivo getAdesivo() {
+        return adesivo;
     }
 
-    public void setProduto(Adesivo produto) {
-        this.produto = produto;
+    public void setAdesivo(Adesivo adesivo) {
+        this.adesivo = adesivo;
     }
 
     public Funcionario getFuncionario() {

@@ -15,14 +15,14 @@ import java.util.List;
 public class OrdemProducaoService {
 
     private final OrdemProducaoRepository ordemProducaoRepository;
-    private final AdesivoService produtoService;
+    private final AdesivoService adesivoService;
     private final FichaTecnicaService fichaTecnicaService;
     private final FuncionarioRepository funcionarioRepository;
     private final InsumoService insumoService;
     private final MovimentacaoService movimentacaoService;
 
     public OrdemProducaoService(OrdemProducaoRepository ordemProducaoRepository,
-                                AdesivoService produtoService,
+                                AdesivoService adesivoService,
                                 InsumoRepository insumoRepository,
                                 FichaTecnicaService fichaTecnicaService,
                                 FuncionarioRepository funcionarioRepository,
@@ -30,7 +30,7 @@ public class OrdemProducaoService {
                                 MovimentacaoService movimentacaoService)
     {
         this.ordemProducaoRepository = ordemProducaoRepository;
-        this.produtoService = produtoService;
+        this.adesivoService = adesivoService;
         this.fichaTecnicaService = fichaTecnicaService;
         this.funcionarioRepository = funcionarioRepository;
         this.insumoService = insumoService;
@@ -43,20 +43,18 @@ public class OrdemProducaoService {
 
     @Transactional(rollbackFor = Exception.class)
     public OrdemProducao abrirOrdem(OrdemProducaoDTO dto) throws Exception {
-        Adesivo produto = produtoService.buscarPorId(dto.produtoId());
+        Adesivo adesivo = adesivoService.buscarPorId(dto.produtoId());
+
+        if (adesivo.getCliente() == null) {
+            throw new Exception("O adesivo selecionado não possui um cliente vinculado.");
+        }
 
         Funcionario funcionario = funcionarioRepository.findById(dto.funcionarioId())
                 .orElseThrow(() -> new Exception("Funcionário não encontrado."));
 
         OrdemProducao ordemProducao = new OrdemProducao();
-        ordemProducao.setProduto(produto);
-
-        if (produto.getCliente() == null) {
-            throw new Exception("O produto selecionado não possui um cliente vinculado.");
-        }
-
-        ordemProducao.setCliente(produto.getCliente());
-
+        ordemProducao.setAdesivo(adesivo);
+        ordemProducao.setCliente(adesivo.getCliente());
         ordemProducao.setFuncionario(funcionario);
         ordemProducao.setQtdPedida(dto.qtdPedida());
         ordemProducao.setStatus(OrdemProducao.StatusOrdem.PENDENTE);
@@ -65,7 +63,6 @@ public class OrdemProducaoService {
 
         return ordemProducaoRepository.save(ordemProducao);
     }
-
 
     @Transactional(rollbackFor = Exception.class)
     public OrdemProducao finalizarOrdem(Long id) throws Exception {
@@ -76,45 +73,44 @@ public class OrdemProducaoService {
             throw new Exception("Esta ordem já foi finalizada.");
         }
 
-        List<FichaTecnica> itensFicha = fichaTecnicaService
-                .buscarReceitaProduto(ordemProducao.getProduto().getId());
+        Adesivo adesivo = ordemProducao.getAdesivo();
 
-        if (itensFicha.isEmpty()) {
-            throw new Exception("Produto não possui uma Ficha Técnica cadastrada.");
+        if (adesivo.getComprimento() == null || adesivo.getAltura() == null) {
+            throw new Exception("O adesivo não possui dimensões cadastradas.");
         }
 
-        for (FichaTecnica ficha: itensFicha) {
-            Double areaAdesivo = (ficha.getAltura() * ficha.getComprimento()) / 10000;
+        List<FichaTecnica> itensFicha = fichaTecnicaService
+                .buscarReceitaAdesivo(adesivo.getId());
 
-            double consumoSubstrato = ordemProducao.getQtdPedida() * areaAdesivo;
+        if (itensFicha.isEmpty()) {
+            throw new Exception("Adesivo não possui uma Ficha Técnica cadastrada.");
+        }
 
-            if (ficha.getTipoAdesivo() == FichaTecnica.TipoAdesivo.RESINADO && ficha.getQtdResina() != null) {
-                Double consumoResina =  ficha.getQtdResina() * ordemProducao.getQtdPedida();
+        // Calcula área do adesivo em m² (dimensões em cm)
+        Double areaAdesivo = (adesivo.getAltura() * adesivo.getComprimento()) / 10000;
 
-                //TODO implementar baixa da resina
-            }
+        for (FichaTecnica ficha : itensFicha) {
+            // quantidade da ficha = fator de consumo do insumo por m²
+            double consumoInsumo = ordemProducao.getQtdPedida() * areaAdesivo * ficha.getQuantidade();
 
-            insumoService.baixarEstoque(ficha.getInsumo().getId(), consumoSubstrato);
+            insumoService.baixarEstoque(ficha.getInsumo().getId(), consumoInsumo);
 
             MovimentacaoEstoque movInsumo = new MovimentacaoEstoque();
             movInsumo.setInsumo(ficha.getInsumo());
-            movInsumo.setQuantidade(-consumoSubstrato);
-            movInsumo.setValorUnitario(ordemProducao.getProduto().getValorUnitario());
+            movInsumo.setQuantidade(-consumoInsumo);
+            movInsumo.setValorUnitario(ficha.getInsumo().getValorUnitario());
             movInsumo.setTipo(MovimentacaoEstoque.TipoMovimentacao.SAIDA_INSUMO);
             movInsumo.setObservacao("Consumo automático para Ordem de Produção #" + ordemProducao.getId());
 
             movimentacaoService.registar(movInsumo);
         }
 
-        Double precoVenda = ordemProducao.getProduto().getValorUnitario();
-
-        produtoService.aumentarQuantidade(ordemProducao.getProduto().getId(), ordemProducao.getQtdPedida());
-
         MovimentacaoEstoque movProduto = new MovimentacaoEstoque();
-        movProduto.setProduto(ordemProducao.getProduto());
+        movProduto.setProduto(adesivo);
         movProduto.setQuantidade(ordemProducao.getQtdPedida().doubleValue());
         movProduto.setTipo(MovimentacaoEstoque.TipoMovimentacao.ENTRADA_PRODUTO);
-        movProduto.setValorUnitario(precoVenda);
+        movProduto.setValorUnitario(adesivo.getValorUnitario());
+        movProduto.setObservacao("Produção concluída para Ordem #" + ordemProducao.getId());
 
         movimentacaoService.registar(movProduto);
 
@@ -136,5 +132,4 @@ public class OrdemProducaoService {
         ordemProducao.setStatus(OrdemProducao.StatusOrdem.CANCELADO);
         ordemProducaoRepository.save(ordemProducao);
     }
-
 }

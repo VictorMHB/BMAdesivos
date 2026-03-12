@@ -71,7 +71,7 @@ public class AdesivoService {
         adesivo.setTipoAdesivo(dto.tipoAdesivo());
         adesivo.setComprimento(dto.comprimento());
         adesivo.setAltura(dto.altura());
-        adesivo.setPrecoVenda(dto.precoVenda());
+        adesivo.setValorUnitario(dto.precoVenda());
         adesivo.setCliente(cliente);
         adesivo.setAtivo(true);
 
@@ -113,7 +113,7 @@ public class AdesivoService {
         }
 
         if (dto.getPrecoVenda() != null && dto.getPrecoVenda() > 0) {
-            adesivo.setPrecoVenda(dto.getPrecoVenda());
+            adesivo.setValorUnitario(dto.getPrecoVenda());
         }
 
         if (dto.getAtivo() != null) {

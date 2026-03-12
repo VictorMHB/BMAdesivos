@@ -5,7 +5,6 @@ import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Table(name = "fichas_tecnicas")
-@SQLDelete(sql = "UPDATE fichas_tecnicas SET ativo = false WHERE id = ?")
 public class FichaTecnica {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,25 +13,9 @@ public class FichaTecnica {
     @Column(nullable = false)
     private Integer quantidade;
 
-    @Column(nullable = false)
-    private String substrato;
-
-    @Column(nullable = false)
-    private Double comprimento;
-
-    @Column(nullable = false)
-    private Double altura;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TipoAdesivo tipoAdesivo;
-
-    @Column
-    private Double qtdResina;
-
     @ManyToOne
-    @JoinColumn(name = "produto_id", nullable = false)
-    private Adesivo produto;
+    @JoinColumn(name = "adesivo_id", nullable = false)
+    private Adesivo adesivo;
 
     @ManyToOne
     @JoinColumn(name = "insumo_id", nullable = false)
@@ -41,11 +24,6 @@ public class FichaTecnica {
     @Column(nullable = false)
     private boolean ativo = true;
 
-    public enum TipoAdesivo {
-        PLACA_ALUMINIO,
-        ADESIVO,
-        RESINADO
-    }
 
     public FichaTecnica() {}
 
@@ -65,52 +43,12 @@ public class FichaTecnica {
         this.quantidade = quantidade;
     }
 
-    public String getSubstrato() {
-        return substrato;
+    public Adesivo getAdesivo() {
+        return adesivo;
     }
 
-    public void setSubstrato(String substrato) {
-        this.substrato = substrato;
-    }
-
-    public Double getComprimento() {
-        return comprimento;
-    }
-
-    public void setComprimento(Double comprimento) {
-        this.comprimento = comprimento;
-    }
-
-    public Double getAltura() {
-        return altura;
-    }
-
-    public void setAltura(Double altura) {
-        this.altura = altura;
-    }
-
-    public TipoAdesivo getTipoAdesivo() {
-        return tipoAdesivo;
-    }
-
-    public void setTipoAdesivo(TipoAdesivo tipoAdesivo) {
-        this.tipoAdesivo = tipoAdesivo;
-    }
-
-    public Double getQtdResina() {
-        return qtdResina;
-    }
-
-    public void setQtdResina(Double qtdResina) {
-        this.qtdResina = qtdResina;
-    }
-
-    public Adesivo getProduto() {
-        return produto;
-    }
-
-    public void setProduto(Adesivo produto) {
-        this.produto = produto;
+    public void setAdesivo(Adesivo adesivo) {
+        this.adesivo = adesivo;
     }
 
     public Insumo getInsumo() {

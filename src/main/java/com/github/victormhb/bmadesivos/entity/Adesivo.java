@@ -1,6 +1,5 @@
 package com.github.victormhb.bmadesivos.entity;
 
-import com.github.victormhb.bmadesivos.enums.TipoAdesivo;
 import jakarta.persistence.*;
 
 @Entity
@@ -24,7 +23,7 @@ public class Adesivo {
     private Double altura;
 
     @Column(nullable = false)
-    private Double precoVenda;
+    private Double valorUnitario;
 
     @Column(nullable = false)
     private boolean ativo = true;
@@ -61,8 +60,13 @@ public class Adesivo {
     public Double getAltura() { return altura; }
     public void setAltura(Double altura) { this.altura = altura; }
 
-    public Double getPrecoVenda() { return precoVenda; }
-    public void setPrecoVenda(Double precoVenda) { this.precoVenda = precoVenda; }
+    public Double getValorUnitario() {
+        return valorUnitario;
+    }
+
+    public void setValorUnitario(Double valorUnitario) {
+        this.valorUnitario = valorUnitario;
+    }
 
     public boolean isAtivo() { return ativo; }
     public void setAtivo(boolean ativo) { this.ativo = ativo; }

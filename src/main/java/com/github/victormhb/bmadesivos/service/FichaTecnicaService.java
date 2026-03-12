@@ -17,65 +17,50 @@ import java.util.List;
 public class FichaTecnicaService {
 
     private final FichaTecnicaRepository fichaTecnicaRepository;
-    private final AdesivoRepository produtoRepository;
+    private final AdesivoRepository adesivoRepository;
     private final InsumoRepository insumoRepository;
 
     @Autowired
     public FichaTecnicaService(
             FichaTecnicaRepository fichaTecnicaRepository,
-            AdesivoRepository produtoRepository,
+            AdesivoRepository adesivoRepository,
             InsumoRepository insumoRepository)
     {
         this.fichaTecnicaRepository = fichaTecnicaRepository;
-        this.produtoRepository = produtoRepository;
+        this.adesivoRepository = adesivoRepository;
         this.insumoRepository = insumoRepository;
     }
 
     @Transactional
-    public FichaTecnica adicionarItem(FichaTecnicaDTO dto) throws Exception {
+    public FichaTecnica adicionarFicha(FichaTecnicaDTO dto) throws Exception {
         if (dto.quantidade() == null || dto.quantidade() <= 0) {
             throw new Exception("A quantidade necessária deve ser maior que zero.");
         }
 
-        if (dto.altura() == 0 || dto.altura() <= 0 || dto.comprimento() == 0 || dto.comprimento() <= 0) {
-            throw new Exception("As dimensões devem ser maiores que zero");
-        }
-
-        Adesivo produto = produtoRepository.findById(dto.produtoId())
-                .orElseThrow(() -> new Exception("Produto não encontrado."));
+        Adesivo adesivo = adesivoRepository.findById(dto.adesivoId())
+                .orElseThrow(() -> new Exception("Adesivo não encontrado."));
 
         Insumo insumo = insumoRepository.findById(dto.insumoId())
-                .orElseThrow(() -> new Exception("Material não encontrado."));
-
-        if (dto.valorUnitario() != null && dto.valorUnitario() > 0) {
-            produto.setValorUnitario(dto.valorUnitario());
-            produtoRepository.save(produto);
-        }
+                .orElseThrow(() -> new Exception("Insumo não encontrado."));
 
         FichaTecnica item = new FichaTecnica();
-        item.setProduto(produto);
+        item.setAdesivo(adesivo);
         item.setInsumo(insumo);
-
         item.setQuantidade(dto.quantidade());
-        item.setSubstrato(dto.substrato());
-        item.setAltura(dto.altura());
-        item.setComprimento(dto.comprimento());
-        item.setTipoAdesivo(dto.tipoAdesivo());
-        item.setQtdResina(dto.qtdResina());
         item.setAtivo(true);
 
         return fichaTecnicaRepository.save(item);
     }
 
-    public List<FichaTecnica> buscarReceitaProduto(Long idProduto) throws Exception {
-        Adesivo produto = produtoRepository.findById(idProduto)
-                .orElseThrow(() -> new Exception("Produto não encontrado."));
+    public List<FichaTecnica> buscarReceitaAdesivo(Long adesivoId) throws Exception {
+        Adesivo adesivo = adesivoRepository.findById(adesivoId)
+                .orElseThrow(() -> new Exception("Adesivo não encontrado."));
 
-        return fichaTecnicaRepository.findByProduto(produto);
+        return fichaTecnicaRepository.findByAdesivo(adesivo);
     }
 
     @Transactional
-    public void deletarItem(Long id) throws Exception {
+    public void deletarFicha(Long id) throws Exception {
         FichaTecnica item = fichaTecnicaRepository.findById(id)
                 .orElseThrow(() -> new Exception("Item da ficha técnica não encontrado."));
 
