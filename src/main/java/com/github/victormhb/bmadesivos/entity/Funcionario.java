@@ -2,6 +2,7 @@ package com.github.victormhb.bmadesivos.entity;
 
 import br.com.caelum.stella.bean.validation.CNPJ;
 import br.com.caelum.stella.bean.validation.CPF;
+import com.github.victormhb.bmadesivos.enums.Cargo;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,10 +33,6 @@ public class Funcionario implements UserDetails {
     @Column(nullable = false)
     private Cargo cargo;
 
-    public enum Cargo {
-        FUNCIONARIO,
-        ADMIN
-    }
 
     @Column(nullable = false)
     private boolean trocarSenha = true;

@@ -1,13 +1,14 @@
 package com.github.victormhb.bmadesivos.dto.auth;
 
 import com.github.victormhb.bmadesivos.entity.Funcionario;
+import com.github.victormhb.bmadesivos.enums.Cargo;
 
 public class RegisterRequest {
     private String nome;
     private String email;
     private String cpf;
     private String senha;
-    private Funcionario.Cargo cargo;
+    private Cargo cargo;
 
     public String getNome() {
         return nome;
@@ -41,11 +42,11 @@ public class RegisterRequest {
         this.senha = senha;
     }
 
-    public Funcionario.Cargo getCargo() {
+    public Cargo getCargo() {
         return cargo;
     }
 
-    public void setCargo(Funcionario.Cargo cargo) {
+    public void setCargo(Cargo cargo) {
         this.cargo = cargo;
     }
 }

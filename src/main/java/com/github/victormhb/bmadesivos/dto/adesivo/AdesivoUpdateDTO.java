@@ -1,11 +1,12 @@
 package com.github.victormhb.bmadesivos.dto.adesivo;
 
 import com.github.victormhb.bmadesivos.entity.Adesivo;
+import com.github.victormhb.bmadesivos.enums.TipoAdesivo;
 
 public class AdesivoUpdateDTO {
     private String nome;
     private String descricao;
-    private Adesivo.TipoAdesivo tipoAdesivo;
+    private TipoAdesivo tipoAdesivo;
     private Double comprimento;
     private Double altura;
     private Double precoVenda;
@@ -20,8 +21,8 @@ public class AdesivoUpdateDTO {
     public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) { this.descricao = descricao; }
 
-    public Adesivo.TipoAdesivo getTipoAdesivo() { return tipoAdesivo; }
-    public void setTipoAdesivo(Adesivo.TipoAdesivo tipoAdesivo) { this.tipoAdesivo = tipoAdesivo; }
+    public TipoAdesivo getTipoAdesivo() { return tipoAdesivo; }
+    public void setTipoAdesivo(TipoAdesivo tipoAdesivo) { this.tipoAdesivo = tipoAdesivo; }
 
     public Double getComprimento() { return comprimento; }
     public void setComprimento(Double comprimento) { this.comprimento = comprimento; }

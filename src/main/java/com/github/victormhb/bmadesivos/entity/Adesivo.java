@@ -1,5 +1,6 @@
 package com.github.victormhb.bmadesivos.entity;
 
+import com.github.victormhb.bmadesivos.enums.TipoAdesivo;
 import jakarta.persistence.*;
 
 @Entity
@@ -27,12 +28,6 @@ public class Adesivo {
 
     @Column(nullable = false)
     private boolean ativo = true;
-
-    public enum TipoAdesivo {
-        PLACA_ALUMINIO,
-        ADESIVO,
-        RESINADO
-    }
 
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)

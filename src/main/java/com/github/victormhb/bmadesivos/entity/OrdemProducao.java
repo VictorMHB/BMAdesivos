@@ -1,5 +1,6 @@
 package com.github.victormhb.bmadesivos.entity;
 
+import com.github.victormhb.bmadesivos.enums.StatusOrdem;
 import jakarta.persistence.*;
 import org.hibernate.annotations.SQLDelete;
 
@@ -38,13 +39,6 @@ public class OrdemProducao {
 
     @Column(nullable = false)
     private boolean ativo = true;
-
-    public enum StatusOrdem {
-        PENDENTE,
-        EM_PRODUCAO,
-        CONCLUIDO,
-        CANCELADO
-    }
 
     public OrdemProducao() {}
 

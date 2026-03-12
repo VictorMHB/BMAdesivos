@@ -2,6 +2,7 @@ package com.github.victormhb.bmadesivos.service;
 
 import com.github.victormhb.bmadesivos.dto.OrdemProducaoDTO;
 import com.github.victormhb.bmadesivos.entity.*;
+import com.github.victormhb.bmadesivos.enums.StatusOrdem;
 import com.github.victormhb.bmadesivos.repository.FuncionarioRepository;
 import com.github.victormhb.bmadesivos.repository.InsumoRepository;
 import com.github.victormhb.bmadesivos.repository.OrdemProducaoRepository;
@@ -57,7 +58,7 @@ public class OrdemProducaoService {
         ordemProducao.setCliente(adesivo.getCliente());
         ordemProducao.setFuncionario(funcionario);
         ordemProducao.setQtdPedida(dto.qtdPedida());
-        ordemProducao.setStatus(OrdemProducao.StatusOrdem.PENDENTE);
+        ordemProducao.setStatus(StatusOrdem.PENDENTE);
         ordemProducao.setDataAbertura(LocalDateTime.now());
         ordemProducao.setAtivo(true);
 
@@ -69,7 +70,7 @@ public class OrdemProducaoService {
         OrdemProducao ordemProducao = ordemProducaoRepository.findById(id)
                 .orElseThrow(() -> new Exception("Ordem de Produção não encontrada."));
 
-        if (ordemProducao.getStatus().equals(OrdemProducao.StatusOrdem.CONCLUIDO)) {
+        if (ordemProducao.getStatus().equals(StatusOrdem.CONCLUIDO)) {
             throw new Exception("Esta ordem já foi finalizada.");
         }
 
@@ -114,7 +115,7 @@ public class OrdemProducaoService {
 
         movimentacaoService.registar(movProduto);
 
-        ordemProducao.setStatus(OrdemProducao.StatusOrdem.CONCLUIDO);
+        ordemProducao.setStatus(StatusOrdem.CONCLUIDO);
         ordemProducao.setDataConclusao(LocalDateTime.now());
 
         return ordemProducaoRepository.save(ordemProducao);
@@ -125,11 +126,11 @@ public class OrdemProducaoService {
         OrdemProducao ordemProducao = ordemProducaoRepository.findById(id)
                 .orElseThrow(() -> new Exception("Ordem de Produção não encontrada."));
 
-        if (ordemProducao.getStatus().equals(OrdemProducao.StatusOrdem.CONCLUIDO)) {
+        if (ordemProducao.getStatus().equals(StatusOrdem.CONCLUIDO)) {
             throw new Exception("Não é possível cancelar uma ordem já concluída.");
         }
 
-        ordemProducao.setStatus(OrdemProducao.StatusOrdem.CANCELADO);
+        ordemProducao.setStatus(StatusOrdem.CANCELADO);
         ordemProducaoRepository.save(ordemProducao);
     }
 }
