@@ -9,7 +9,7 @@ public class AdesivoUpdateDTO {
     private TipoAdesivo tipoAdesivo;
     private Double comprimento;
     private Double altura;
-    private Double precoVenda;
+    private Double valorUnitario;
     private Long clienteId;
     private Boolean ativo;
 
@@ -30,8 +30,13 @@ public class AdesivoUpdateDTO {
     public Double getAltura() { return altura; }
     public void setAltura(Double altura) { this.altura = altura; }
 
-    public Double getPrecoVenda() { return precoVenda; }
-    public void setPrecoVenda(Double precoVenda) { this.precoVenda = precoVenda; }
+    public Double getValorUnitario() {
+        return valorUnitario;
+    }
+
+    public void setValorUnitario(Double valorUnitario) {
+        this.valorUnitario = valorUnitario;
+    }
 
     public Long getClienteId() { return clienteId; }
     public void setClienteId(Long clienteId) { this.clienteId = clienteId; }

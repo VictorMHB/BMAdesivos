@@ -8,6 +8,6 @@ public record AdesivoDTO(
         TipoAdesivo tipoAdesivo,
         Double comprimento,
         Double altura,
-        Double precoVenda,
+        Double valorUnitario,
         Long clienteId
 ) {}

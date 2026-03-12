@@ -23,13 +23,13 @@ public class AdesivoController {
         this.adesivoService = adesivoService;
     }
 
-    @GetMapping("/todos")
+    @GetMapping
     public List<Adesivo> listar() {
         return adesivoService.listar();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<?> buscarAdesivoPorId(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(adesivoService.buscarPorId(id));
         } catch (Exception e) {
@@ -38,7 +38,7 @@ public class AdesivoController {
     }
 
     @PostMapping("/novo")
-    public ResponseEntity<?> criar(@RequestBody AdesivoDTO dto) {
+    public ResponseEntity<?> adicionarAdesivo(@RequestBody AdesivoDTO dto) {
         try {
             return ResponseEntity.ok(adesivoService.adicionarAdesivo(dto));
         } catch (Exception e) {
@@ -47,7 +47,7 @@ public class AdesivoController {
     }
 
     @PatchMapping("/editar/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody AdesivoUpdateDTO dto) {
+    public ResponseEntity<?> atualizarAdesivo(@PathVariable Long id, @RequestBody AdesivoUpdateDTO dto) {
         try {
             return ResponseEntity.ok(adesivoService.atualizarAdesivo(id, dto));
         } catch (Exception e) {
@@ -56,7 +56,7 @@ public class AdesivoController {
     }
 
     @DeleteMapping("/apagar/{id}")
-    public ResponseEntity<?> deletar(@PathVariable Long id) {
+    public ResponseEntity<?> deletarAdesivo(@PathVariable Long id) {
         try {
             adesivoService.deletarAdesivo(id);
             return ResponseEntity.ok().build();

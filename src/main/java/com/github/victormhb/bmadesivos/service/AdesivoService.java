@@ -55,7 +55,7 @@ public class AdesivoService {
             throw new Exception("O tipo do adesivo é obrigatório.");
         }
 
-        if (dto.precoVenda() == null || dto.precoVenda() <= 0) {
+        if (dto.valorUnitario() == null || dto.valorUnitario() <= 0) {
             throw new Exception("O preço de venda deve ser maior que zero.");
         }
 
@@ -71,7 +71,7 @@ public class AdesivoService {
         adesivo.setTipoAdesivo(dto.tipoAdesivo());
         adesivo.setComprimento(dto.comprimento());
         adesivo.setAltura(dto.altura());
-        adesivo.setValorUnitario(dto.precoVenda());
+        adesivo.setValorUnitario(dto.valorUnitario());
         adesivo.setCliente(cliente);
         adesivo.setAtivo(true);
 
@@ -112,8 +112,8 @@ public class AdesivoService {
             adesivo.setAltura(dto.getAltura());
         }
 
-        if (dto.getPrecoVenda() != null && dto.getPrecoVenda() > 0) {
-            adesivo.setValorUnitario(dto.getPrecoVenda());
+        if (dto.getValorUnitario() != null && dto.getValorUnitario() > 0) {
+            adesivo.setValorUnitario(dto.getValorUnitario());
         }
 
         if (dto.getAtivo() != null) {
