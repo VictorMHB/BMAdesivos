@@ -3,10 +3,10 @@ package com.github.victormhb.bmadesivos.service;
 import com.github.victormhb.bmadesivos.dto.FichaTecnicaDTO;
 import com.github.victormhb.bmadesivos.entity.FichaTecnica;
 import com.github.victormhb.bmadesivos.entity.Insumo;
-import com.github.victormhb.bmadesivos.entity.Produto;
+import com.github.victormhb.bmadesivos.entity.Adesivo;
 import com.github.victormhb.bmadesivos.repository.FichaTecnicaRepository;
 import com.github.victormhb.bmadesivos.repository.InsumoRepository;
-import com.github.victormhb.bmadesivos.repository.ProdutoRepository;
+import com.github.victormhb.bmadesivos.repository.AdesivoRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,13 +17,13 @@ import java.util.List;
 public class FichaTecnicaService {
 
     private final FichaTecnicaRepository fichaTecnicaRepository;
-    private final ProdutoRepository produtoRepository;
+    private final AdesivoRepository produtoRepository;
     private final InsumoRepository insumoRepository;
 
     @Autowired
     public FichaTecnicaService(
             FichaTecnicaRepository fichaTecnicaRepository,
-            ProdutoRepository produtoRepository,
+            AdesivoRepository produtoRepository,
             InsumoRepository insumoRepository)
     {
         this.fichaTecnicaRepository = fichaTecnicaRepository;
@@ -41,7 +41,7 @@ public class FichaTecnicaService {
             throw new Exception("As dimensões devem ser maiores que zero");
         }
 
-        Produto produto = produtoRepository.findById(dto.produtoId())
+        Adesivo produto = produtoRepository.findById(dto.produtoId())
                 .orElseThrow(() -> new Exception("Produto não encontrado."));
 
         Insumo insumo = insumoRepository.findById(dto.insumoId())
@@ -68,7 +68,7 @@ public class FichaTecnicaService {
     }
 
     public List<FichaTecnica> buscarReceitaProduto(Long idProduto) throws Exception {
-        Produto produto = produtoRepository.findById(idProduto)
+        Adesivo produto = produtoRepository.findById(idProduto)
                 .orElseThrow(() -> new Exception("Produto não encontrado."));
 
         return fichaTecnicaRepository.findByProduto(produto);

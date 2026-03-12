@@ -15,14 +15,14 @@ import java.util.List;
 public class OrdemProducaoService {
 
     private final OrdemProducaoRepository ordemProducaoRepository;
-    private final ProdutoService produtoService;
+    private final AdesivoService produtoService;
     private final FichaTecnicaService fichaTecnicaService;
     private final FuncionarioRepository funcionarioRepository;
     private final InsumoService insumoService;
     private final MovimentacaoService movimentacaoService;
 
     public OrdemProducaoService(OrdemProducaoRepository ordemProducaoRepository,
-                                ProdutoService produtoService,
+                                AdesivoService produtoService,
                                 InsumoRepository insumoRepository,
                                 FichaTecnicaService fichaTecnicaService,
                                 FuncionarioRepository funcionarioRepository,
@@ -43,7 +43,7 @@ public class OrdemProducaoService {
 
     @Transactional(rollbackFor = Exception.class)
     public OrdemProducao abrirOrdem(OrdemProducaoDTO dto) throws Exception {
-        Produto produto = produtoService.buscarPorId(dto.produtoId());
+        Adesivo produto = produtoService.buscarPorId(dto.produtoId());
 
         Funcionario funcionario = funcionarioRepository.findById(dto.funcionarioId())
                 .orElseThrow(() -> new Exception("Funcionário não encontrado."));

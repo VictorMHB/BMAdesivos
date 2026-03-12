@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "movimentacoes_estoque")
 public class MovimentacaoEstoque {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,7 +17,7 @@ public class MovimentacaoEstoque {
 
     @ManyToOne
     @JoinColumn(name = "produto_id")
-    private Produto produto;
+    private Adesivo produto;
 
     @Column(nullable = false)
     private Double quantidade;
@@ -61,11 +62,11 @@ public class MovimentacaoEstoque {
         this.insumo = insumo;
     }
 
-    public Produto getProduto() {
+    public Adesivo getProduto() {
         return produto;
     }
 
-    public void setProduto(Produto produto) {
+    public void setProduto(Adesivo produto) {
         this.produto = produto;
     }
 

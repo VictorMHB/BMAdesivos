@@ -111,6 +111,10 @@ public class ClienteService {
             cliente.setTelefone(dto.getTelefone().trim());
         }
 
+        if (dto.getAtivo() != null) {
+            cliente.setAtivo(dto.getAtivo());
+        }
+
         if (dto.getEndereco() != null) {
             Endereco endereco = cliente.getEndereco() != null ? cliente.getEndereco() : new Endereco();
 

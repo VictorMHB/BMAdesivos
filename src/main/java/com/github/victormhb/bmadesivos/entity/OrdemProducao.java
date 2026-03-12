@@ -16,7 +16,7 @@ public class OrdemProducao {
 
     @ManyToOne
     @JoinColumn(name = "produto_id", nullable = false)
-    private Produto produto;
+    private Adesivo produto;
 
     @ManyToOne
     @JoinColumn(name = "funcionario_id", nullable = false)
@@ -56,11 +56,11 @@ public class OrdemProducao {
         this.id = id;
     }
 
-    public Produto getProduto() {
+    public Adesivo getProduto() {
         return produto;
     }
 
-    public void setProduto(Produto produto) {
+    public void setProduto(Adesivo produto) {
         this.produto = produto;
     }
 

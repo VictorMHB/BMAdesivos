@@ -32,7 +32,7 @@ public class FichaTecnica {
 
     @ManyToOne
     @JoinColumn(name = "produto_id", nullable = false)
-    private Produto produto;
+    private Adesivo produto;
 
     @ManyToOne
     @JoinColumn(name = "insumo_id", nullable = false)
@@ -105,11 +105,11 @@ public class FichaTecnica {
         this.qtdResina = qtdResina;
     }
 
-    public Produto getProduto() {
+    public Adesivo getProduto() {
         return produto;
     }
 
-    public void setProduto(Produto produto) {
+    public void setProduto(Adesivo produto) {
         this.produto = produto;
     }
 

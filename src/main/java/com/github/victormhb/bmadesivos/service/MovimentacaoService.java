@@ -3,7 +3,7 @@ package com.github.victormhb.bmadesivos.service;
 import com.github.victormhb.bmadesivos.dto.MovimentacaoDTO;
 import com.github.victormhb.bmadesivos.entity.Insumo;
 import com.github.victormhb.bmadesivos.entity.MovimentacaoEstoque;
-import com.github.victormhb.bmadesivos.entity.Produto;
+import com.github.victormhb.bmadesivos.entity.Adesivo;
 import com.github.victormhb.bmadesivos.repository.MovimentacaoEstoqueRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -16,9 +16,9 @@ public class MovimentacaoService {
 
     private final MovimentacaoEstoqueRepository movimentacaoRepository;
     private final InsumoService insumoService;
-    private final ProdutoService produtoService;
+    private final AdesivoService produtoService;
 
-    public MovimentacaoService(MovimentacaoEstoqueRepository movimentacaoRepository, InsumoService insumoService, ProdutoService produtoService) {
+    public MovimentacaoService(MovimentacaoEstoqueRepository movimentacaoRepository, InsumoService insumoService, AdesivoService produtoService) {
         this.movimentacaoRepository = movimentacaoRepository;
         this.insumoService = insumoService;
         this.produtoService = produtoService;
@@ -50,7 +50,7 @@ public class MovimentacaoService {
             Insumo insumo = insumoService.buscarPorId(dto.materialId());
             movimentacaoEstoque.setInsumo(insumo);
         } else if (dto.produtoId() != null) {
-            Produto produto = produtoService.buscarPorId(dto.produtoId());
+            Adesivo produto = produtoService.buscarPorId(dto.produtoId());
             movimentacaoEstoque.setProduto(produto);
         }
 
