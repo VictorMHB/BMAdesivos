@@ -1,11 +1,14 @@
 package com.github.victormhb.bmadesivos.dto.insumo;
 
+import com.github.victormhb.bmadesivos.enums.TipoInsumo;
+
 public class InsumoUpdateDTO {
     private String nome;
     private String unidadeMedida;
     private Double estoqueAtual;
     private Double estoqueMinimo;
     private Double valorUnitario;
+    private TipoInsumo tipoInsumo;
     private Boolean ativo;
 
     public InsumoUpdateDTO() {
@@ -49,6 +52,14 @@ public class InsumoUpdateDTO {
 
     public void setValorUnitario(Double valorUnitario) {
         this.valorUnitario = valorUnitario;
+    }
+
+    public TipoInsumo getTipoInsumo() {
+        return tipoInsumo;
+    }
+
+    public void setTipoInsumo(TipoInsumo tipoInsumo) {
+        this.tipoInsumo = tipoInsumo;
     }
 
     public Boolean getAtivo() {

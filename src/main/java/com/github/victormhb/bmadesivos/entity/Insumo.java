@@ -1,5 +1,6 @@
 package com.github.victormhb.bmadesivos.entity;
 
+import com.github.victormhb.bmadesivos.enums.TipoInsumo;
 import jakarta.persistence.*;
 import org.hibernate.annotations.SQLDelete;
 
@@ -25,6 +26,10 @@ public class Insumo {
     private String unidadeMedida;
 
     private Double valorUnitario;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoInsumo tipoInsumo;
 
     @Column(nullable = false)
     private boolean ativo = true;
@@ -88,6 +93,14 @@ public class Insumo {
 
     public void setValorUnitario(Double valorUnitario) {
         this.valorUnitario = valorUnitario;
+    }
+
+    public TipoInsumo getTipoInsumo() {
+        return tipoInsumo;
+    }
+
+    public void setTipoInsumo(TipoInsumo tipoInsumo) {
+        this.tipoInsumo = tipoInsumo;
     }
 
     public boolean isAtivo() {

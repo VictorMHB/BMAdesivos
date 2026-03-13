@@ -46,12 +46,17 @@ public class InsumoService {
             throw new Exception("Nome contém caracteres inválidos.");
         }
 
+        if (dto.tipoInsumo() == null) {
+            throw new Exception("O tipo do insumo é obrigatório.");
+        }
+
         Insumo insumo = new Insumo();
         insumo.setNome(nomeTratado);
         insumo.setUnidadeMedida(dto.unidadeMedida() != null ? dto.unidadeMedida().trim() : null);
         insumo.setEstoqueAtual(dto.estoqueAtual() != null ? dto.estoqueAtual() : 0.0);
         insumo.setEstoqueMinimo(dto.estoqueMinimo() != null ? dto.estoqueMinimo() : 0.0);
         insumo.setValorUnitario(dto.valorUnitario() != null ? dto.valorUnitario() : 0.0);
+        insumo.setTipoInsumo(dto.tipoInsumo());
         insumo.setAtivo(true);
 
         return insumoRepository.save(insumo);
@@ -87,6 +92,9 @@ public class InsumoService {
         }
         if (dto.getValorUnitario() != null) {
             insumo.setValorUnitario(dto.getValorUnitario());
+        }
+        if (dto.getTipoInsumo() != null) {
+            insumo.setTipoInsumo(dto.getTipoInsumo());
         }
 
         if (dto.getAtivo() != null) {
