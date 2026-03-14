@@ -80,31 +80,31 @@ public class OrdemProducaoService {
             throw new Exception("O adesivo não possui dimensões cadastradas.");
         }
 
-        List<FichaTecnica> itensFicha = fichaTecnicaService
-                .buscarReceitaAdesivo(adesivo.getId());
-
-        if (itensFicha.isEmpty()) {
-            throw new Exception("Adesivo não possui uma Ficha Técnica cadastrada.");
-        }
-
-        // Calcula área do adesivo em m² (dimensões em cm)
-        Double areaAdesivo = (adesivo.getAltura() * adesivo.getComprimento()) / 10000;
-
-        for (FichaTecnica ficha : itensFicha) {
-            // quantidade da ficha = fator de consumo do insumo por m²
-            double consumoInsumo = ordemProducao.getQtdPedida() * areaAdesivo * ficha.getQuantidade();
-
-            insumoService.baixarEstoque(ficha.getInsumo().getId(), consumoInsumo);
-
-            MovimentacaoEstoque movInsumo = new MovimentacaoEstoque();
-            movInsumo.setInsumo(ficha.getInsumo());
-            movInsumo.setQuantidade(-consumoInsumo);
-            movInsumo.setValorUnitario(ficha.getInsumo().getValorUnitario());
-            movInsumo.setTipo(MovimentacaoEstoque.TipoMovimentacao.SAIDA_INSUMO);
-            movInsumo.setObservacao("Consumo automático para Ordem de Produção #" + ordemProducao.getId());
-
-            movimentacaoService.registar(movInsumo);
-        }
+//        List<FichaTecnica> itensFicha = fichaTecnicaService
+//                .buscarReceitaAdesivo(adesivo.getId());
+//
+//        if (itensFicha.isEmpty()) {
+//            throw new Exception("Adesivo não possui uma Ficha Técnica cadastrada.");
+//        }
+//
+//        // Calcula área do adesivo em m² (dimensões em cm)
+//        Double areaAdesivo = (adesivo.getAltura() * adesivo.getComprimento()) / 10000;
+//
+//        for (FichaTecnica ficha : itensFicha) {
+//            // quantidade da ficha = fator de consumo do insumo por m²
+//            double consumoInsumo = ordemProducao.getQtdPedida() * areaAdesivo * ficha.getQuantidade();
+//
+//            insumoService.baixarEstoque(ficha.getInsumo().getId(), consumoInsumo);
+//
+//            MovimentacaoEstoque movInsumo = new MovimentacaoEstoque();
+//            movInsumo.setInsumo(ficha.getInsumo());
+//            movInsumo.setQuantidade(-consumoInsumo);
+//            movInsumo.setValorUnitario(ficha.getInsumo().getValorUnitario());
+//            movInsumo.setTipo(MovimentacaoEstoque.TipoMovimentacao.SAIDA_INSUMO);
+//            movInsumo.setObservacao("Consumo automático para Ordem de Produção #" + ordemProducao.getId());
+//
+//            movimentacaoService.registar(movInsumo);
+//        }
 
         MovimentacaoEstoque movProduto = new MovimentacaoEstoque();
         movProduto.setProduto(adesivo);

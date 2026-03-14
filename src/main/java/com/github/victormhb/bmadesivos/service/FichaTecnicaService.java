@@ -1,9 +1,10 @@
 package com.github.victormhb.bmadesivos.service;
 
-import com.github.victormhb.bmadesivos.dto.FichaTecnicaDTO;
+import com.github.victormhb.bmadesivos.dto.adesivo.FichaTecnicaDTO;
 import com.github.victormhb.bmadesivos.entity.FichaTecnica;
 import com.github.victormhb.bmadesivos.entity.Insumo;
 import com.github.victormhb.bmadesivos.entity.Adesivo;
+import com.github.victormhb.bmadesivos.enums.TipoInsumo;
 import com.github.victormhb.bmadesivos.repository.FichaTecnicaRepository;
 import com.github.victormhb.bmadesivos.repository.InsumoRepository;
 import com.github.victormhb.bmadesivos.repository.AdesivoRepository;
@@ -31,40 +32,41 @@ public class FichaTecnicaService {
         this.insumoRepository = insumoRepository;
     }
 
-    @Transactional
-    public FichaTecnica adicionarFicha(FichaTecnicaDTO dto) throws Exception {
-        if (dto.quantidade() == null || dto.quantidade() <= 0) {
-            throw new Exception("A quantidade necessária deve ser maior que zero.");
-        }
+    public List<FichaTecnica> buscarPorAdesivo(Long adesivoId) throws Exception {
+        Adesivo adesivo = adesivoRepository.findById(adesivoId)
+                .orElseThrow(() -> new Exception("Adesivo não encontrado."));
+        return fichaTecnicaRepository.findByAdesivoAndAtivoTrue(adesivo);
+    }
 
-        Adesivo adesivo = adesivoRepository.findById(dto.adesivoId())
+    @Transactional
+    public FichaTecnica adicionarInsumoFicha(Long adesivoId, FichaTecnicaDTO dto) throws Exception {
+        Adesivo adesivo = adesivoRepository.findById(adesivoId)
                 .orElseThrow(() -> new Exception("Adesivo não encontrado."));
 
         Insumo insumo = insumoRepository.findById(dto.insumoId())
                 .orElseThrow(() -> new Exception("Insumo não encontrado."));
 
-        FichaTecnica item = new FichaTecnica();
-        item.setAdesivo(adesivo);
-        item.setInsumo(insumo);
-        item.setQuantidade(dto.quantidade());
-        item.setAtivo(true);
+        if (insumo.getTipoInsumo() != TipoInsumo.TINTA) {
+            if (dto.quantidade() == null || dto.quantidade() <= 0) {
+                throw new Exception("Quantidade é obrigatória para insumos que não são tinta.");
+            }
+        }
 
-        return fichaTecnicaRepository.save(item);
-    }
+        FichaTecnica itemInsumo = new FichaTecnica();
+        itemInsumo.setAdesivo(adesivo);
+        itemInsumo.setInsumo(insumo);
+        itemInsumo.setQuantidade(dto.quantidade());
+        itemInsumo.setAtivo(true);
 
-    public List<FichaTecnica> buscarReceitaAdesivo(Long adesivoId) throws Exception {
-        Adesivo adesivo = adesivoRepository.findById(adesivoId)
-                .orElseThrow(() -> new Exception("Adesivo não encontrado."));
-
-        return fichaTecnicaRepository.findByAdesivo(adesivo);
+        return fichaTecnicaRepository.save(itemInsumo);
     }
 
     @Transactional
-    public void deletarFicha(Long id) throws Exception {
-        FichaTecnica item = fichaTecnicaRepository.findById(id)
+    public void deletarInsumoFicha(Long id) throws Exception {
+        FichaTecnica itemInsumo = fichaTecnicaRepository.findById(id)
                 .orElseThrow(() -> new Exception("Item da ficha técnica não encontrado."));
 
-        item.setAtivo(false);
-        fichaTecnicaRepository.save(item);
+        itemInsumo.setAtivo(false);
+        fichaTecnicaRepository.save(itemInsumo);
     }
 }

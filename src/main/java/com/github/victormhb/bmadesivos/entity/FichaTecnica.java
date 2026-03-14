@@ -1,7 +1,6 @@
 package com.github.victormhb.bmadesivos.entity;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Table(name = "fichas_tecnicas")
@@ -10,8 +9,7 @@ public class FichaTecnica {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Integer quantidade;
+    private Double quantidade;
 
     @ManyToOne
     @JoinColumn(name = "adesivo_id", nullable = false)
@@ -24,7 +22,6 @@ public class FichaTecnica {
     @Column(nullable = false)
     private boolean ativo = true;
 
-
     public FichaTecnica() {}
 
     public Long getId() {
@@ -35,11 +32,11 @@ public class FichaTecnica {
         this.id = id;
     }
 
-    public Integer getQuantidade() {
+    public Double getQuantidade() {
         return quantidade;
     }
 
-    public void setQuantidade(Integer quantidade) {
+    public void setQuantidade(Double quantidade) {
         this.quantidade = quantidade;
     }
 
