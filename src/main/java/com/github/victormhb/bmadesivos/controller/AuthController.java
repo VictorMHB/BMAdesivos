@@ -72,6 +72,7 @@ public class AuthController {
                 request.getEmail(),
                 request.getCpf(),
                 passwordEncoder.encode(request.getSenha()),
+                request.getTelefone(),
                 request.getCargo()
         );
 

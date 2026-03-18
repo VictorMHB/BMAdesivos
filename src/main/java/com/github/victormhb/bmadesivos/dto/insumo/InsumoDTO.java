@@ -1,13 +1,19 @@
 package com.github.victormhb.bmadesivos.dto.insumo;
 
+import com.github.victormhb.bmadesivos.enums.TamanhoEmbalagem;
 import com.github.victormhb.bmadesivos.enums.TipoInsumo;
 
 public record InsumoDTO(
         String nome,
-        String unidadeMedida,
+        String descricao,
+        TipoInsumo tipoInsumo,
         Double estoqueAtual,
-        Double estoqueMinimo,
         Double valorUnitario,
-        TipoInsumo tipoInsumo
-)
-{ }
+        // Substrato
+        Double largura,
+        Double comprimento,
+        Double metrosQuadrados,
+        // Tinta
+        String cor,
+        TamanhoEmbalagem tamanhoEmbalagem
+) {}

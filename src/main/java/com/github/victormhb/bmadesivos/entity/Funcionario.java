@@ -29,10 +29,12 @@ public class Funcionario implements UserDetails {
     @Column(nullable = false)
     private String senha;
 
+    @Column(nullable = false)
+    private String telefone;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Cargo cargo;
-
 
     @Column(nullable = false)
     private boolean trocarSenha = true;
@@ -42,10 +44,11 @@ public class Funcionario implements UserDetails {
 
     public Funcionario() {}
 
-    public Funcionario(String nome, String email, String cpf, String senha, Cargo cargo) {
+    public Funcionario(String nome, String email, String cpf, String senha, String telefone, Cargo cargo) {
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
+        this.telefone = telefone;
         this.senha = senha;
         this.cargo = cargo;
         this.trocarSenha = true;
@@ -121,6 +124,14 @@ public class Funcionario implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public String getSenha() {

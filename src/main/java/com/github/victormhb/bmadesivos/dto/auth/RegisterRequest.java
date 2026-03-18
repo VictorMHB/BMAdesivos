@@ -7,6 +7,7 @@ public class RegisterRequest {
     private String nome;
     private String email;
     private String cpf;
+    private String telefone;
     private String senha;
     private Cargo cargo;
 
@@ -32,6 +33,14 @@ public class RegisterRequest {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public String getSenha() {

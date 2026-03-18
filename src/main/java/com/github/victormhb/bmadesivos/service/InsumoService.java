@@ -3,11 +3,12 @@ package com.github.victormhb.bmadesivos.service;
 import com.github.victormhb.bmadesivos.dto.insumo.InsumoDTO;
 import com.github.victormhb.bmadesivos.dto.insumo.InsumoUpdateDTO;
 import com.github.victormhb.bmadesivos.entity.Insumo;
+import com.github.victormhb.bmadesivos.enums.TipoInsumo;
 import com.github.victormhb.bmadesivos.repository.InsumoRepository;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -50,14 +51,41 @@ public class InsumoService {
             throw new Exception("O tipo do insumo é obrigatório.");
         }
 
+        if (dto.estoqueAtual() == null || dto.estoqueAtual() < 0) {
+            throw new Exception("Estoque atual inválido.");
+        }
+
         Insumo insumo = new Insumo();
         insumo.setNome(nomeTratado);
-        insumo.setUnidadeMedida(dto.unidadeMedida() != null ? dto.unidadeMedida().trim() : null);
-        insumo.setEstoqueAtual(dto.estoqueAtual() != null ? dto.estoqueAtual() : 0.0);
-        insumo.setEstoqueMinimo(dto.estoqueMinimo() != null ? dto.estoqueMinimo() : 0.0);
-        insumo.setValorUnitario(dto.valorUnitario() != null ? dto.valorUnitario() : 0.0);
+        insumo.setDescricao(dto.descricao() != null ? dto.descricao().trim() : null);
         insumo.setTipoInsumo(dto.tipoInsumo());
+        insumo.setEstoqueAtual(dto.estoqueAtual());
+        insumo.setValorUnitario(dto.valorUnitario());
         insumo.setAtivo(true);
+
+        // Substrato
+        if (dto.tipoInsumo() == TipoInsumo.SUBSTRATO) {
+            insumo.setLargura(dto.largura());
+            insumo.setComprimento(dto.comprimento());
+
+            if (dto.largura() != null && dto.comprimento() != null) {
+                insumo.setMetrosQuadrados(dto.largura() * dto.comprimento());
+            } else if (dto.metrosQuadrados() != null) {
+                insumo.setMetrosQuadrados(dto.metrosQuadrados());
+            }
+        }
+
+        // Tinta
+        if (dto.tipoInsumo() == TipoInsumo.TINTA) {
+            if (dto.cor() == null || dto.cor().trim().isEmpty()) {
+                throw new Exception("A cor é obrigatória para tintas.");
+            }
+            if (dto.tamanhoEmbalagem() == null) {
+                throw new Exception("O tamanho da embalagem é obrigatório para tintas.");
+            }
+            insumo.setCor(dto.cor().trim());
+            insumo.setTamanhoEmbalagem(dto.tamanhoEmbalagem());
+        }
 
         return insumoRepository.save(insumo);
     }
@@ -81,20 +109,38 @@ public class InsumoService {
             insumo.setNome(nomeTratado);
         }
 
-        if (dto.getUnidadeMedida() != null) {
-            insumo.setUnidadeMedida(dto.getUnidadeMedida());
+        if (dto.getDescricao() != null) {
+            insumo.setDescricao(dto.getDescricao().trim());
         }
+
         if (dto.getEstoqueAtual() != null) {
             insumo.setEstoqueAtual(dto.getEstoqueAtual());
         }
-        if (dto.getEstoqueMinimo() != null) {
-            insumo.setEstoqueMinimo(dto.getEstoqueMinimo());
-        }
+
         if (dto.getValorUnitario() != null) {
             insumo.setValorUnitario(dto.getValorUnitario());
         }
+
         if (dto.getTipoInsumo() != null) {
             insumo.setTipoInsumo(dto.getTipoInsumo());
+        }
+
+        // Substrato
+        if (insumo.getTipoInsumo() == TipoInsumo.SUBSTRATO) {
+            if (dto.getLargura() != null) insumo.setLargura(dto.getLargura());
+            if (dto.getComprimento() != null) insumo.setComprimento(dto.getComprimento());
+
+            if (insumo.getLargura() != null && insumo.getComprimento() != null) {
+                insumo.setMetrosQuadrados(insumo.getLargura() * insumo.getComprimento());
+            } else if (dto.getMetrosQuadrados() != null) {
+                insumo.setMetrosQuadrados(dto.getMetrosQuadrados());
+            }
+        }
+
+        // Tinta
+        if (insumo.getTipoInsumo() == TipoInsumo.TINTA) {
+            if (dto.getCor() != null) insumo.setCor(dto.getCor().trim());
+            if (dto.getTamanhoEmbalagem() != null) insumo.setTamanhoEmbalagem(dto.getTamanhoEmbalagem());
         }
 
         if (dto.getAtivo() != null) {
@@ -115,10 +161,6 @@ public class InsumoService {
 
         insumo.setEstoqueAtual(insumo.getEstoqueAtual() - qtdConsumida);
         insumoRepository.save(insumo);
-
-        if (insumo.getEstoqueAtual() <= insumo.getEstoqueMinimo()) {
-            System.out.println("ALERTA: " + insumo.getNome() + " atingiu o nível crítico.");
-        }
     }
 
     @Transactional

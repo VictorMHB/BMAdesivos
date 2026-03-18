@@ -8,6 +8,7 @@ public record FuncionarioDTO(
         String nome,
         String cpf,
         String email,
+        String telefone,
         Cargo cargo
 ) {
 }

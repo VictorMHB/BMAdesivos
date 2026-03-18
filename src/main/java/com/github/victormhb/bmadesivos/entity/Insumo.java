@@ -1,12 +1,11 @@
 package com.github.victormhb.bmadesivos.entity;
 
+import com.github.victormhb.bmadesivos.enums.TamanhoEmbalagem;
 import com.github.victormhb.bmadesivos.enums.TipoInsumo;
 import jakarta.persistence.*;
-import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Table(name = "insumos")
-@SQLDelete(sql = "UPDATE insumos SET ativo = false WHERE id = ?")
 public class Insumo {
 
     @Id
@@ -16,36 +15,33 @@ public class Insumo {
     @Column(nullable = false)
     private String nome;
 
-    @Column(nullable = false)
-    private Double estoqueAtual;
-
-    @Column(nullable = false)
-    private Double estoqueMinimo;
-
-    @Column(nullable = false)
-    private String unidadeMedida;
-
-    private Double valorUnitario;
+    private String descricao;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoInsumo tipoInsumo;
 
     @Column(nullable = false)
+    private Double estoqueAtual;
+
+    private Double valorUnitario;
+
+    //Substrato
+    private Double largura;
+    private Double comprimento;
+    private Double metrosQuadrados;
+
+    //Tinta
+    private String cor;
+
+    @Enumerated(EnumType.STRING)
+    private TamanhoEmbalagem tamanhoEmbalagem;
+
+
+    @Column(nullable = false)
     private boolean ativo = true;
 
-    public Insumo() {
-
-    }
-
-    public Insumo(String nome, Double estoqueAtual, Double estoqueMinimo, String unidadeMedida, Double valorUnitario) {
-        this.nome = nome;
-        this.estoqueAtual = estoqueAtual;
-        this.estoqueMinimo = estoqueMinimo;
-        this.unidadeMedida = unidadeMedida;
-        this.valorUnitario = valorUnitario;
-        this.ativo = true;
-    }
+    public Insumo() {}
 
     public Long getId() {
         return id;
@@ -63,28 +59,28 @@ public class Insumo {
         this.nome = nome;
     }
 
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public TipoInsumo getTipoInsumo() {
+        return tipoInsumo;
+    }
+
+    public void setTipoInsumo(TipoInsumo tipoInsumo) {
+        this.tipoInsumo = tipoInsumo;
+    }
+
     public Double getEstoqueAtual() {
         return estoqueAtual;
     }
 
     public void setEstoqueAtual(Double estoqueAtual) {
         this.estoqueAtual = estoqueAtual;
-    }
-
-    public Double getEstoqueMinimo() {
-        return estoqueMinimo;
-    }
-
-    public void setEstoqueMinimo(Double estoqueMinimo) {
-        this.estoqueMinimo = estoqueMinimo;
-    }
-
-    public String getUnidadeMedida() {
-        return unidadeMedida;
-    }
-
-    public void setUnidadeMedida(String unidadeMedida) {
-        this.unidadeMedida = unidadeMedida;
     }
 
     public Double getValorUnitario() {
@@ -95,12 +91,44 @@ public class Insumo {
         this.valorUnitario = valorUnitario;
     }
 
-    public TipoInsumo getTipoInsumo() {
-        return tipoInsumo;
+    public Double getLargura() {
+        return largura;
     }
 
-    public void setTipoInsumo(TipoInsumo tipoInsumo) {
-        this.tipoInsumo = tipoInsumo;
+    public void setLargura(Double largura) {
+        this.largura = largura;
+    }
+
+    public Double getComprimento() {
+        return comprimento;
+    }
+
+    public void setComprimento(Double comprimento) {
+        this.comprimento = comprimento;
+    }
+
+    public Double getMetrosQuadrados() {
+        return metrosQuadrados;
+    }
+
+    public void setMetrosQuadrados(Double metrosQuadrados) {
+        this.metrosQuadrados = metrosQuadrados;
+    }
+
+    public String getCor() {
+        return cor;
+    }
+
+    public void setCor(String cor) {
+        this.cor = cor;
+    }
+
+    public TamanhoEmbalagem getTamanhoEmbalagem() {
+        return tamanhoEmbalagem;
+    }
+
+    public void setTamanhoEmbalagem(TamanhoEmbalagem tamanhoEmbalagem) {
+        this.tamanhoEmbalagem = tamanhoEmbalagem;
     }
 
     public boolean isAtivo() {
