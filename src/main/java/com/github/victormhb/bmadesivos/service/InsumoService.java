@@ -67,11 +67,21 @@ public class InsumoService {
         if (dto.tipoInsumo() == TipoInsumo.SUBSTRATO) {
             insumo.setLargura(dto.largura());
             insumo.setComprimento(dto.comprimento());
+            insumo.setQuantidadeRolos(dto.quantidadeRolos() != null ? dto.quantidadeRolos() : 0);
 
+            Double m2PorRolo = null;
             if (dto.largura() != null && dto.comprimento() != null) {
-                insumo.setMetrosQuadrados(dto.largura() * dto.comprimento());
+                m2PorRolo = dto.largura() * dto.comprimento();
+                insumo.setMetrosQuadrados(m2PorRolo);
             } else if (dto.metrosQuadrados() != null) {
-                insumo.setMetrosQuadrados(dto.metrosQuadrados());
+                m2PorRolo = dto.metrosQuadrados();
+                insumo.setMetrosQuadrados(m2PorRolo);
+            }
+
+            if (m2PorRolo != null && dto.quantidadeRolos() != null) {
+                insumo.setEstoqueAtual(m2PorRolo * dto.quantidadeRolos());
+            } else {
+                insumo.setEstoqueAtual(dto.estoqueAtual() != null ? dto.estoqueAtual() : 0.0);
             }
         }
 
@@ -129,11 +139,19 @@ public class InsumoService {
         if (insumo.getTipoInsumo() == TipoInsumo.SUBSTRATO) {
             if (dto.getLargura() != null) insumo.setLargura(dto.getLargura());
             if (dto.getComprimento() != null) insumo.setComprimento(dto.getComprimento());
+            if (dto.getQuantidadeRolos() != null) insumo.setQuantidadeRolos(dto.getQuantidadeRolos());
 
+            Double m2PorRolo = null;
             if (insumo.getLargura() != null && insumo.getComprimento() != null) {
-                insumo.setMetrosQuadrados(insumo.getLargura() * insumo.getComprimento());
+                m2PorRolo = insumo.getLargura() * insumo.getComprimento();
+                insumo.setMetrosQuadrados(m2PorRolo);
             } else if (dto.getMetrosQuadrados() != null) {
-                insumo.setMetrosQuadrados(dto.getMetrosQuadrados());
+                m2PorRolo = dto.getMetrosQuadrados();
+                insumo.setMetrosQuadrados(m2PorRolo);
+            }
+
+            if (m2PorRolo != null && insumo.getQuantidadeRolos() != null) {
+                insumo.setEstoqueAtual(m2PorRolo * insumo.getQuantidadeRolos());
             }
         }
 
