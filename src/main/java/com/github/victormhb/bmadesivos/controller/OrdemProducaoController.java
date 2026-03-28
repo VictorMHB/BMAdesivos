@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/producao")
-@CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping("/ordens")
+@CrossOrigin(origins = "http://localhost:5173",
+        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PATCH, RequestMethod.OPTIONS})
 public class OrdemProducaoController {
 
     private final OrdemProducaoService ordemProducaoService;
@@ -26,35 +27,48 @@ public class OrdemProducaoController {
         return ordemProducaoService.listar();
     }
 
-    @PostMapping("/abrir")
-    public ResponseEntity<?> abrirOrdem(@RequestBody OrdemProducaoDTO dto) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
-            OrdemProducao novaOrdem = ordemProducaoService.abrirOrdem(dto);
-            return ResponseEntity.ok(novaOrdem);
+            return ResponseEntity.ok(ordemProducaoService.buscarPorId(id));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/nova")
+    public ResponseEntity<?> abrir(@RequestBody OrdemProducaoDTO dto) {
+        try {
+            return ResponseEntity.ok(ordemProducaoService.abrirOrdem(dto));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @PatchMapping("/finalizar/{id}")
-    public ResponseEntity<?> fecharOrdem(@PathVariable Long id) {
+    @PatchMapping("/{id}/avancar")
+    public ResponseEntity<?> avancar(@PathVariable Long id) {
         try {
-            OrdemProducao ordemFinalizada = ordemProducaoService.finalizarOrdem(id);
-            return ResponseEntity.ok(ordemFinalizada);
+            return ResponseEntity.ok(ordemProducaoService.avancarStatus(id));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @PatchMapping("/cancelar/{id}")
-    public ResponseEntity<?> cancelarOrdem(@PathVariable Long id) {
+    @PatchMapping("/{id}/finalizar")
+    public ResponseEntity<?> finalizar(@PathVariable Long id) {
         try {
-            ordemProducaoService.cancelarOrdem(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(ordemProducaoService.finalizarOrdem(id));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-
+    @PatchMapping("/{id}/cancelar")
+    public ResponseEntity<?> cancelar(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(ordemProducaoService.cancelarOrdem(id));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

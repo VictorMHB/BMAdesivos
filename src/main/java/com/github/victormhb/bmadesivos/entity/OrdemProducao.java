@@ -2,13 +2,10 @@ package com.github.victormhb.bmadesivos.entity;
 
 import com.github.victormhb.bmadesivos.enums.StatusOrdem;
 import jakarta.persistence.*;
-import org.hibernate.annotations.SQLDelete;
-
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ordens_producao")
-@SQLDelete(sql = "UPDATE ordens_producao SET ativo = false WHERE id = ?")
 public class OrdemProducao {
 
     @Id
@@ -42,75 +39,30 @@ public class OrdemProducao {
 
     public OrdemProducao() {}
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Adesivo getAdesivo() { return adesivo; }
+    public void setAdesivo(Adesivo adesivo) { this.adesivo = adesivo; }
 
-    public Adesivo getAdesivo() {
-        return adesivo;
-    }
+    public Funcionario getFuncionario() { return funcionario; }
+    public void setFuncionario(Funcionario funcionario) { this.funcionario = funcionario; }
 
-    public void setAdesivo(Adesivo adesivo) {
-        this.adesivo = adesivo;
-    }
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
 
-    public Funcionario getFuncionario() {
-        return funcionario;
-    }
+    public Integer getQtdPedida() { return qtdPedida; }
+    public void setQtdPedida(Integer qtdPedida) { this.qtdPedida = qtdPedida; }
 
-    public void setFuncionario(Funcionario funcionario) {
-        this.funcionario = funcionario;
-    }
+    public StatusOrdem getStatus() { return status; }
+    public void setStatus(StatusOrdem status) { this.status = status; }
 
-    public Cliente getCliente() {
-        return cliente;
-    }
+    public LocalDateTime getDataAbertura() { return dataAbertura; }
+    public void setDataAbertura(LocalDateTime dataAbertura) { this.dataAbertura = dataAbertura; }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
+    public LocalDateTime getDataConclusao() { return dataConclusao; }
+    public void setDataConclusao(LocalDateTime dataConclusao) { this.dataConclusao = dataConclusao; }
 
-    public Integer getQtdPedida() {
-        return qtdPedida;
-    }
-
-    public void setQtdPedida(Integer qtdPedida) {
-        this.qtdPedida = qtdPedida;
-    }
-
-    public StatusOrdem getStatus() {
-        return status;
-    }
-
-    public void setStatus(StatusOrdem status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getDataAbertura() {
-        return dataAbertura;
-    }
-
-    public void setDataAbertura(LocalDateTime dataAbertura) {
-        this.dataAbertura = dataAbertura;
-    }
-
-    public LocalDateTime getDataConclusao() {
-        return dataConclusao;
-    }
-
-    public void setDataConclusao(LocalDateTime dataConclusao) {
-        this.dataConclusao = dataConclusao;
-    }
-
-    public boolean isAtivo() {
-        return ativo;
-    }
-
-    public void setAtivo(boolean ativo) {
-        this.ativo = ativo;
-    }
+    public boolean isAtivo() { return ativo; }
+    public void setAtivo(boolean ativo) { this.ativo = ativo; }
 }

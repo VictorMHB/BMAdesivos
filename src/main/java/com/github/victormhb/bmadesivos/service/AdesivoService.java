@@ -4,7 +4,13 @@ import com.github.victormhb.bmadesivos.dto.adesivo.AdesivoDTO;
 import com.github.victormhb.bmadesivos.dto.adesivo.AdesivoUpdateDTO;
 import com.github.victormhb.bmadesivos.entity.Adesivo;
 import com.github.victormhb.bmadesivos.entity.Cliente;
+import com.github.victormhb.bmadesivos.entity.FichaTecnica;
+import com.github.victormhb.bmadesivos.entity.Insumo;
+import com.github.victormhb.bmadesivos.enums.TipoAdesivo;
+import com.github.victormhb.bmadesivos.enums.TipoInsumo;
 import com.github.victormhb.bmadesivos.repository.AdesivoRepository;
+import com.github.victormhb.bmadesivos.repository.FichaTecnicaRepository;
+import com.github.victormhb.bmadesivos.repository.InsumoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -17,11 +23,18 @@ public class AdesivoService {
 
     private final AdesivoRepository adesivoRepository;
     private final ClienteService clienteService;
+    private final InsumoRepository insumoRepository;
+    private final FichaTecnicaRepository fichaTecnicaRepository;
 
     @Autowired
-    public AdesivoService(AdesivoRepository adesivoRepository, ClienteService clienteService) {
+    public AdesivoService(AdesivoRepository adesivoRepository,
+                          ClienteService clienteService,
+                          InsumoRepository insumoRepository,
+                          FichaTecnicaRepository fichaTecnicaRepository) {
         this.adesivoRepository = adesivoRepository;
         this.clienteService = clienteService;
+        this.insumoRepository = insumoRepository;
+        this.fichaTecnicaRepository = fichaTecnicaRepository;
     }
 
     public List<Adesivo> listar() {
@@ -63,6 +76,18 @@ public class AdesivoService {
             throw new Exception("O cliente é obrigatório.");
         }
 
+        if (dto.substratoId() == null) {
+            throw new Exception("O substrato é obrigatório.");
+        }
+
+        if (dto.tintaIds() == null || dto.tintaIds().isEmpty()) {
+            throw new Exception("Selecione ao menos uma tinta.");
+        }
+
+        if (dto.tipoAdesivo() == TipoAdesivo.ADESIVO_RESINADO && dto.resinaId() == null) {
+            throw new Exception("A resina é obrigatória para adesivos resinados.");
+        }
+
         Cliente cliente = clienteService.buscarPorId(dto.clienteId());
 
         Adesivo adesivo = new Adesivo();
@@ -75,7 +100,11 @@ public class AdesivoService {
         adesivo.setCliente(cliente);
         adesivo.setAtivo(true);
 
-        return adesivoRepository.save(adesivo);
+        Adesivo salvo = adesivoRepository.save(adesivo);
+
+        criarFichaTecnica(salvo, dto.substratoId(), dto.tintaIds(), dto.resinaId());
+
+        return salvo;
     }
 
     @Transactional
@@ -120,7 +149,82 @@ public class AdesivoService {
             adesivo.setAtivo(dto.getAtivo());
         }
 
+        if (dto.getClienteId() != null) {
+            Cliente cliente = clienteService.buscarPorId(dto.getClienteId());
+            adesivo.setCliente(cliente);
+        }
+
+        // Atualiza ficha técnica se algum insumo foi alterado
+        boolean atualizarFicha = dto.getSubstratoId() != null
+                || (dto.getTintaIds() != null && !dto.getTintaIds().isEmpty())
+                || dto.getResinaId() != null;
+
+        if (atualizarFicha) {
+            // Remove itens antigos da ficha
+            List<FichaTecnica> itensAntigos = fichaTecnicaRepository.findByAdesivoAndAtivoTrue(adesivo);
+            itensAntigos.forEach(item -> item.setAtivo(false));
+            fichaTecnicaRepository.saveAll(itensAntigos);
+
+            criarFichaTecnica(adesivo,
+                    dto.getSubstratoId(),
+                    dto.getTintaIds(),
+                    dto.getResinaId());
+        }
+
         return adesivoRepository.save(adesivo);
+    }
+
+    private void criarFichaTecnica(Adesivo adesivo, Long substratoId,
+                                   List<Long> tintaIds, Long resinaId) throws Exception {
+        // Substrato
+        if (substratoId != null) {
+            Insumo substrato = insumoRepository.findById(substratoId)
+                    .orElseThrow(() -> new Exception("Substrato não encontrado."));
+
+            if (substrato.getTipoInsumo() != TipoInsumo.SUBSTRATO) {
+                throw new Exception("Insumo selecionado não é um substrato.");
+            }
+
+            FichaTecnica itemSubstrato = new FichaTecnica();
+            itemSubstrato.setAdesivo(adesivo);
+            itemSubstrato.setInsumo(substrato);
+            itemSubstrato.setAtivo(true);
+            fichaTecnicaRepository.save(itemSubstrato);
+        }
+
+        // Tintas
+        if (tintaIds != null) {
+            for (Long tintaId : tintaIds) {
+                Insumo tinta = insumoRepository.findById(tintaId)
+                        .orElseThrow(() -> new Exception("Tinta não encontrada."));
+
+                if (tinta.getTipoInsumo() != TipoInsumo.TINTA) {
+                    throw new Exception("Insumo selecionado não é uma tinta.");
+                }
+
+                FichaTecnica itemTinta = new FichaTecnica();
+                itemTinta.setAdesivo(adesivo);
+                itemTinta.setInsumo(tinta);
+                itemTinta.setAtivo(true);
+                fichaTecnicaRepository.save(itemTinta);
+            }
+        }
+
+        // Resina
+        if (resinaId != null) {
+            Insumo resina = insumoRepository.findById(resinaId)
+                    .orElseThrow(() -> new Exception("Resina não encontrada."));
+
+            if (resina.getTipoInsumo() != TipoInsumo.RESINA) {
+                throw new Exception("Insumo selecionado não é uma resina.");
+            }
+
+            FichaTecnica itemResina = new FichaTecnica();
+            itemResina.setAdesivo(adesivo);
+            itemResina.setInsumo(resina);
+            itemResina.setAtivo(true);
+            fichaTecnicaRepository.save(itemResina);
+        }
     }
 
     @Transactional

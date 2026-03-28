@@ -62,7 +62,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/funcionarios/{id}/alterar-senha").hasAnyRole("ADMIN", "FUNCIONARIO")
 
                         //Rotas de Operação
-                        .requestMatchers("/clientes/**", "/adesivos/**", "/producao/**", "/insumos/**")
+                        .requestMatchers("/clientes/**", "/adesivos/**", "/producao/**", "/ordens/**", "/insumos/**")
                         .hasAnyRole("ADMIN", "FUNCIONARIO")
 
                         //Rotas de Admin
