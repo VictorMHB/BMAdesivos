@@ -27,6 +27,11 @@ public class OrdemProducaoController {
         return ordemProducaoService.listar();
     }
 
+    @GetMapping("/historico")
+    public List<OrdemProducao> listarHistorico() {
+        return ordemProducaoService.listarHistorico();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
@@ -58,6 +63,15 @@ public class OrdemProducaoController {
     public ResponseEntity<?> finalizar(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(ordemProducaoService.finalizarOrdem(id));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{id}/arquivar")
+    public ResponseEntity<?> arquivar(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(ordemProducaoService.arquivarOrdem(id));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

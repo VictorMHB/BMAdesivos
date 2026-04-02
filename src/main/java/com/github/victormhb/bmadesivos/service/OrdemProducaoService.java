@@ -38,9 +38,13 @@ public class OrdemProducaoService {
     }
 
     public List<OrdemProducao> listar() {
-        return ordemProducaoRepository.findAll(
-                Sort.by(Sort.Direction.DESC, "dataAbertura")
-        );
+        return ordemProducaoRepository.findByArquivadaFalseAndStatusNot(StatusOrdem.CANCELADO,
+                Sort.by(Sort.Direction.DESC, "dataAbertura"));
+    }
+
+    public List<OrdemProducao> listarHistorico() {
+        return ordemProducaoRepository.findByArquivadaTrueOrStatus(StatusOrdem.CANCELADO,
+                Sort.by(Sort.Direction.DESC, "dataAbertura"));
     }
 
     public OrdemProducao buscarPorId(Long id) throws Exception {
@@ -127,6 +131,16 @@ public class OrdemProducaoService {
         ordem.setStatus(StatusOrdem.CONCLUIDO);
         ordem.setDataConclusao(LocalDateTime.now());
 
+        return ordemProducaoRepository.save(ordem);
+    }
+
+    @Transactional
+    public OrdemProducao arquivarOrdem(Long id) throws Exception {
+        OrdemProducao ordem = buscarPorId(id);
+        if (ordem.getStatus() != StatusOrdem.CONCLUIDO) {
+            throw new Exception("Apenas ordens concluídas podem ser arquivadas.");
+        }
+        ordem.setArquivada(true);
         return ordemProducaoRepository.save(ordem);
     }
 

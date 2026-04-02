@@ -31,6 +31,9 @@ public class OrdemProducao {
     @Column(nullable = false)
     private StatusOrdem status = StatusOrdem.PENDENTE;
 
+    @Column(nullable = false)
+    private boolean arquivada = false;
+
     private LocalDateTime dataAbertura = LocalDateTime.now();
     private LocalDateTime dataConclusao;
 
@@ -56,6 +59,14 @@ public class OrdemProducao {
 
     public StatusOrdem getStatus() { return status; }
     public void setStatus(StatusOrdem status) { this.status = status; }
+
+    public boolean isArquivada() {
+        return arquivada;
+    }
+
+    public void setArquivada(boolean arquivada) {
+        this.arquivada = arquivada;
+    }
 
     public LocalDateTime getDataAbertura() { return dataAbertura; }
     public void setDataAbertura(LocalDateTime dataAbertura) { this.dataAbertura = dataAbertura; }
