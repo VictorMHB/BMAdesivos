@@ -80,10 +80,6 @@ public class AdesivoService {
             throw new Exception("O substrato é obrigatório.");
         }
 
-        if (dto.tintaIds() == null || dto.tintaIds().isEmpty()) {
-            throw new Exception("Selecione ao menos uma tinta.");
-        }
-
         if (dto.tipoAdesivo() == TipoAdesivo.ADESIVO_RESINADO && dto.resinaId() == null) {
             throw new Exception("A resina é obrigatória para adesivos resinados.");
         }
@@ -101,8 +97,7 @@ public class AdesivoService {
         adesivo.setAtivo(true);
 
         Adesivo salvo = adesivoRepository.save(adesivo);
-
-        criarFichaTecnica(salvo, dto.substratoId(), dto.tintaIds(), dto.resinaId());
+        criarFichaTecnica(salvo, dto.substratoId(), dto.resinaId());
 
         return salvo;
     }
@@ -154,29 +149,19 @@ public class AdesivoService {
             adesivo.setCliente(cliente);
         }
 
-        // Atualiza ficha técnica se algum insumo foi alterado
-        boolean atualizarFicha = dto.getSubstratoId() != null
-                || (dto.getTintaIds() != null && !dto.getTintaIds().isEmpty())
-                || dto.getResinaId() != null;
+        boolean atualizarFicha = dto.getSubstratoId() != null || dto.getResinaId() != null;
 
         if (atualizarFicha) {
-            // Remove itens antigos da ficha
             List<FichaTecnica> itensAntigos = fichaTecnicaRepository.findByAdesivoAndAtivoTrue(adesivo);
             itensAntigos.forEach(item -> item.setAtivo(false));
             fichaTecnicaRepository.saveAll(itensAntigos);
-
-            criarFichaTecnica(adesivo,
-                    dto.getSubstratoId(),
-                    dto.getTintaIds(),
-                    dto.getResinaId());
+            criarFichaTecnica(adesivo, dto.getSubstratoId(), dto.getResinaId());
         }
 
         return adesivoRepository.save(adesivo);
     }
 
-    private void criarFichaTecnica(Adesivo adesivo, Long substratoId,
-                                   List<Long> tintaIds, Long resinaId) throws Exception {
-        // Substrato
+    private void criarFichaTecnica(Adesivo adesivo, Long substratoId, Long resinaId) throws Exception {
         if (substratoId != null) {
             Insumo substrato = insumoRepository.findById(substratoId)
                     .orElseThrow(() -> new Exception("Substrato não encontrado."));
@@ -192,25 +177,6 @@ public class AdesivoService {
             fichaTecnicaRepository.save(itemSubstrato);
         }
 
-        // Tintas
-        if (tintaIds != null) {
-            for (Long tintaId : tintaIds) {
-                Insumo tinta = insumoRepository.findById(tintaId)
-                        .orElseThrow(() -> new Exception("Tinta não encontrada."));
-
-                if (tinta.getTipoInsumo() != TipoInsumo.TINTA) {
-                    throw new Exception("Insumo selecionado não é uma tinta.");
-                }
-
-                FichaTecnica itemTinta = new FichaTecnica();
-                itemTinta.setAdesivo(adesivo);
-                itemTinta.setInsumo(tinta);
-                itemTinta.setAtivo(true);
-                fichaTecnicaRepository.save(itemTinta);
-            }
-        }
-
-        // Resina
         if (resinaId != null) {
             Insumo resina = insumoRepository.findById(resinaId)
                     .orElseThrow(() -> new Exception("Resina não encontrada."));

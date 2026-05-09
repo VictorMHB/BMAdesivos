@@ -6,13 +6,17 @@ public class LoginResponse {
     private String nome;
     private String cargo;
     private boolean requerTrocarSenha;
+    private String email;
+    private String telefone;
 
-    public LoginResponse(Long id, String token, String nome, String cargo, boolean requerTrocarSenha) {
+    public LoginResponse(Long id, String token, String nome, String cargo, boolean requerTrocarSenha, String email, String telefone) {
         this.id = id;
         this.token = token;
         this.nome = nome;
         this.cargo = cargo;
         this.requerTrocarSenha = requerTrocarSenha;
+        this.email = email;
+        this.telefone = telefone;
     }
 
     public Long getId() {
@@ -33,5 +37,13 @@ public class LoginResponse {
 
     public boolean isRequerTrocarSenha() {
         return requerTrocarSenha;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getTelefone() {
+        return telefone;
     }
 }

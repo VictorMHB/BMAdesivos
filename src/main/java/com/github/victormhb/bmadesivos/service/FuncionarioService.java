@@ -24,9 +24,12 @@ public class FuncionarioService {
     private final PasswordEncoder passwordEncoder;
     private final CPFValidator validarCpf = new CPFValidator();
 
-    public FuncionarioService(FuncionarioRepository funcionarioRepository, PasswordEncoder passwordEncoder) {
+    private final EmailService emailService;
+
+    public FuncionarioService(FuncionarioRepository funcionarioRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.funcionarioRepository = funcionarioRepository;
         this.passwordEncoder =  passwordEncoder;
+        this.emailService = emailService;
     }
 
     public List<Funcionario> listar() {
@@ -57,6 +60,13 @@ public class FuncionarioService {
             throw new Exception("Nome deve conter apenas letras.");
         }
 
+        if (dto.email() == null || dto.email().trim().isEmpty()) {
+            throw new Exception("Email é obrigatório.");
+        }
+        if (!dto.email().trim().matches("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+            throw new Exception("Email inválido.");
+        }
+
         validarCpf(dto.cpf());
 
         String senhaTemp = gerarSenhaTemp();
@@ -74,6 +84,12 @@ public class FuncionarioService {
         funcionario.setSenha(senhaCriptografada);
 
         funcionarioRepository.save(funcionario);
+
+        try {
+            emailService.enviarSenhaTemporaria(funcionario.getEmail(), funcionario.getNome(), senhaTemp);
+        } catch (Exception e) {
+            System.out.println("[WARN] Funcionário criado, mas email não enviado: " + e.getMessage());
+        }
 
         return senhaTemp;
     }

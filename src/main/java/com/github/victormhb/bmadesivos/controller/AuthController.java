@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final FuncionarioRepository funcionarioRepository;
@@ -36,6 +35,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request){
         try {
+            System.out.println("Tentando logar o usuário: " + request.getEmail());
+
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getEmail(),
@@ -43,7 +44,12 @@ public class AuthController {
                     )
             );
         } catch (BadCredentialsException e) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas.");
+            System.out.println("Aviso: Credenciais inválidas para o email " + request.getEmail());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas.");
+        } catch (Exception e) {
+            System.out.println("Erro inesperado durante o login: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno.");
         }
 
         Funcionario funcionario = funcionarioRepository.findByEmail(request.getEmail()).orElseThrow();
@@ -56,7 +62,9 @@ public class AuthController {
                         token,
                         funcionario.getNome(),
                         funcionario.getCargo().name(),
-                        funcionario.isTrocarSenha()
+                        funcionario.isTrocarSenha(),
+                        funcionario.getEmail(),
+                        funcionario.getTelefone()
                 )
         );
     }

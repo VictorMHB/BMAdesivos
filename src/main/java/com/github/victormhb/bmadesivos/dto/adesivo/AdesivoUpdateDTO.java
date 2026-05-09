@@ -1,7 +1,6 @@
 package com.github.victormhb.bmadesivos.dto.adesivo;
 
 import com.github.victormhb.bmadesivos.enums.TipoAdesivo;
-import java.util.List;
 
 public class AdesivoUpdateDTO {
     private String nome;
@@ -13,7 +12,6 @@ public class AdesivoUpdateDTO {
     private Long clienteId;
     private Boolean ativo;
     private Long substratoId;
-    private List<Long> tintaIds;
     private Long resinaId;
 
     public AdesivoUpdateDTO() {}
@@ -44,9 +42,6 @@ public class AdesivoUpdateDTO {
 
     public Long getSubstratoId() { return substratoId; }
     public void setSubstratoId(Long substratoId) { this.substratoId = substratoId; }
-
-    public List<Long> getTintaIds() { return tintaIds; }
-    public void setTintaIds(List<Long> tintaIds) { this.tintaIds = tintaIds; }
 
     public Long getResinaId() { return resinaId; }
     public void setResinaId(Long resinaId) { this.resinaId = resinaId; }
