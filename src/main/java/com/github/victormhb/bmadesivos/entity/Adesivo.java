@@ -23,6 +23,9 @@ public class Adesivo {
     private Double comprimento;
     private Double altura;
 
+    @Column(name = "area_cm2")
+    private Double areaCm2;
+
     @Column(nullable = false)
     private Double valorUnitario;
 
@@ -54,6 +57,9 @@ public class Adesivo {
 
     public Double getAltura() { return altura; }
     public void setAltura(Double altura) { this.altura = altura; }
+
+    public Double getAreaCm2() { return areaCm2; }
+    public void setAreaCm2(Double areaCm2) { this.areaCm2 = areaCm2; }
 
     public Double getValorUnitario() {
         return valorUnitario;

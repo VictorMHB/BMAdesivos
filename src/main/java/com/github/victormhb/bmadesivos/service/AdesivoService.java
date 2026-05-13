@@ -80,8 +80,8 @@ public class AdesivoService {
             throw new Exception("O substrato é obrigatório.");
         }
 
-        if (dto.tipoAdesivo() == TipoAdesivo.ADESIVO_RESINADO && dto.resinaId() == null) {
-            throw new Exception("A resina é obrigatória para adesivos resinados.");
+        if (dto.comprimento() == null || dto.altura() == null || dto.comprimento() <= 0 || dto.altura() <= 0) {
+            throw new Exception("Comprimento e altura do adesivo são obrigatórios e devem ser maiores que zero.");
         }
 
         Cliente cliente = clienteService.buscarPorId(dto.clienteId());
@@ -92,6 +92,7 @@ public class AdesivoService {
         adesivo.setTipoAdesivo(dto.tipoAdesivo());
         adesivo.setComprimento(dto.comprimento());
         adesivo.setAltura(dto.altura());
+        adesivo.setAreaCm2(dto.comprimento() * dto.altura());
         adesivo.setValorUnitario(dto.valorUnitario());
         adesivo.setCliente(cliente);
         adesivo.setAtivo(true);
@@ -105,6 +106,9 @@ public class AdesivoService {
     @Transactional
     public Adesivo atualizarAdesivo(Long id, AdesivoUpdateDTO dto) throws Exception {
         Adesivo adesivo = buscarPorId(id);
+
+        Double novoComprimento = dto.getComprimento() != null ? dto.getComprimento() : adesivo.getComprimento();
+        Double novaAltura = dto.getAltura() != null ? dto.getAltura() : adesivo.getAltura();
 
         if (dto.getNome() != null && !dto.getNome().trim().isEmpty()) {
             String nomeTratado = dto.getNome().trim();
@@ -129,11 +133,14 @@ public class AdesivoService {
         }
 
         if (dto.getComprimento() != null) {
-            adesivo.setComprimento(dto.getComprimento());
+            adesivo.setComprimento(novoComprimento);
+        }
+        if (dto.getAltura() != null) {
+            adesivo.setAltura(novaAltura);
         }
 
-        if (dto.getAltura() != null) {
-            adesivo.setAltura(dto.getAltura());
+        if (novoComprimento != null && novaAltura != null) {
+            adesivo.setAreaCm2(novoComprimento * novaAltura); // ← recalcula
         }
 
         if (dto.getValorUnitario() != null && dto.getValorUnitario() > 0) {
@@ -165,10 +172,8 @@ public class AdesivoService {
         if (substratoId != null) {
             Insumo substrato = insumoRepository.findById(substratoId)
                     .orElseThrow(() -> new Exception("Substrato não encontrado."));
-
-            if (substrato.getTipoInsumo() != TipoInsumo.SUBSTRATO) {
+            if (substrato.getTipoInsumo() != TipoInsumo.SUBSTRATO)
                 throw new Exception("Insumo selecionado não é um substrato.");
-            }
 
             FichaTecnica itemSubstrato = new FichaTecnica();
             itemSubstrato.setAdesivo(adesivo);
@@ -180,10 +185,8 @@ public class AdesivoService {
         if (resinaId != null) {
             Insumo resina = insumoRepository.findById(resinaId)
                     .orElseThrow(() -> new Exception("Resina não encontrada."));
-
-            if (resina.getTipoInsumo() != TipoInsumo.RESINA) {
+            if (resina.getTipoInsumo() != TipoInsumo.RESINA)
                 throw new Exception("Insumo selecionado não é uma resina.");
-            }
 
             FichaTecnica itemResina = new FichaTecnica();
             itemResina.setAdesivo(adesivo);

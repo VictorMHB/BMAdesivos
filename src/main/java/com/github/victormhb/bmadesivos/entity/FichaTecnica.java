@@ -9,8 +9,6 @@ public class FichaTecnica {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Double quantidade;
-
     @ManyToOne
     @JoinColumn(name = "adesivo_id", nullable = false)
     private Adesivo adesivo;
@@ -30,14 +28,6 @@ public class FichaTecnica {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Double getQuantidade() {
-        return quantidade;
-    }
-
-    public void setQuantidade(Double quantidade) {
-        this.quantidade = quantidade;
     }
 
     public Adesivo getAdesivo() {

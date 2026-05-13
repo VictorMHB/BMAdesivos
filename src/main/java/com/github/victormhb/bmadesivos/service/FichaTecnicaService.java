@@ -46,16 +46,9 @@ public class FichaTecnicaService {
         Insumo insumo = insumoRepository.findById(dto.insumoId())
                 .orElseThrow(() -> new Exception("Insumo não encontrado."));
 
-        if (insumo.getTipoInsumo() != TipoInsumo.TINTA) {
-            if (dto.quantidade() == null || dto.quantidade() <= 0) {
-                throw new Exception("Quantidade é obrigatória para insumos que não são tinta.");
-            }
-        }
-
         FichaTecnica itemInsumo = new FichaTecnica();
         itemInsumo.setAdesivo(adesivo);
         itemInsumo.setInsumo(insumo);
-        itemInsumo.setQuantidade(dto.quantidade());
         itemInsumo.setAtivo(true);
 
         return fichaTecnicaRepository.save(itemInsumo);
