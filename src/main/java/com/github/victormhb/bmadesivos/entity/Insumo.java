@@ -26,6 +26,12 @@ public class Insumo {
 
     private Double valorUnitario;
 
+    @Column
+    private Double estoqueMinimo;
+
+    @Column
+    private String unidadeMedida;
+
     //Substrato
     private Double largura;
     private Double comprimento;
@@ -90,6 +96,22 @@ public class Insumo {
 
     public void setValorUnitario(Double valorUnitario) {
         this.valorUnitario = valorUnitario;
+    }
+
+    public Double getEstoqueMinimo() {
+        return estoqueMinimo;
+    }
+
+    public void setEstoqueMinimo(Double estoqueMinimo) {
+        this.estoqueMinimo = estoqueMinimo;
+    }
+
+    public String getUnidadeMedida() {
+        return unidadeMedida;
+    }
+
+    public void setUnidadeMedida(String unidadeMedida) {
+        this.unidadeMedida = unidadeMedida;
     }
 
     public Double getLargura() {

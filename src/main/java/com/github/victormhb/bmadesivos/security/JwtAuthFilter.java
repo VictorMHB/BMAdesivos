@@ -1,10 +1,13 @@
 package com.github.victormhb.bmadesivos.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.victormhb.bmadesivos.entity.Funcionario;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,12 +17,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
+    private static final Logger log = LoggerFactory.getLogger(JwtAuthFilter.class);
+
     private final JwtUtil jwtUtil;
-    private final AutenticacaoService autenticacaoService; // Nossa versão do UserDetailsService
+    private final AutenticacaoService autenticacaoService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public JwtAuthFilter(JwtUtil jwtUtil, AutenticacaoService autenticacaoService) {
         this.jwtUtil = jwtUtil;
@@ -34,51 +41,51 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        final String userEmail;
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        jwt = authHeader.substring(7);
+        String jwt = authHeader.substring(7);
 
         try {
-            userEmail = jwtUtil.extractUsername(jwt);
+            String userEmail = jwtUtil.extractUsername(jwt);
 
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = this.autenticacaoService.loadUserByUsername(userEmail);
+                UserDetails userDetails = autenticacaoService.loadUserByUsername(userEmail);
 
                 if (jwtUtil.validateToken(jwt, userDetails)) {
                     if (userDetails instanceof Funcionario funcionario) {
                         String path = request.getRequestURI();
 
                         if (funcionario.isTrocarSenha() && !path.contains("/alterar-senha")) {
-                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                            response.setCharacterEncoding("UTF-8");
-                            response.getWriter().write("Acesso bloqueado: Alteração de senha necessária.");
+                            escreverErroJson(response, HttpServletResponse.SC_FORBIDDEN,
+                                    "Alteração de senha necessária antes de continuar.");
                             return;
                         }
                     }
 
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
+                            userDetails, null, userDetails.getAuthorities()
                     );
-                    authToken.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request)
-                    );
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
         } catch (Exception e) {
-            System.out.println("Erro ao processar o autenticacao: " + e.getMessage());
+            log.error("Erro ao processar autenticação JWT: {}", e.getMessage());
             SecurityContextHolder.clearContext();
         }
 
-
         filterChain.doFilter(request, response);
+    }
+
+    private void escreverErroJson(HttpServletResponse response, int status, String mensagem) throws IOException {
+        response.setStatus(status);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        objectMapper.writeValue(response.getWriter(),
+                Map.of("status", status, "erro", mensagem));
     }
 }
