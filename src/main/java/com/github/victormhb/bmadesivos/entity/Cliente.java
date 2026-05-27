@@ -14,8 +14,7 @@ public class Cliente {
     private Long  id;
     private String nome;
 
-    @CPF(message = "CPF inválido")
-    @CNPJ(message = "CNPJ inválido")
+    @Column(nullable = false, unique = true)
     private String cpfCnpj;
 
     private String email;
