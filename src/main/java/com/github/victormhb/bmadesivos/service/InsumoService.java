@@ -43,7 +43,7 @@ public class InsumoService {
             throw new Exception("Nome deve ter no mínimo 3 caracteres.");
         }
 
-        if (!nomeTratado.matches("[\\p{L}0-9 ]+")) {
+        if (!nomeTratado.matches("[\\p{L}0-9 \\-.,()/&+']+")) {
             throw new Exception("Nome contém caracteres inválidos.");
         }
 
@@ -60,7 +60,6 @@ public class InsumoService {
         insumo.setDescricao(dto.descricao() != null ? dto.descricao().trim() : null);
         insumo.setTipoInsumo(dto.tipoInsumo());
         insumo.setEstoqueAtual(dto.estoqueAtual());
-        insumo.setValorUnitario(dto.valorUnitario());
         insumo.setAtivo(true);
 
         // Substrato
@@ -82,6 +81,16 @@ public class InsumoService {
                 insumo.setEstoqueAtual(m2PorRolo * dto.quantidadeRolos());
             } else {
                 insumo.setEstoqueAtual(dto.estoqueAtual() != null ? dto.estoqueAtual() : 0.0);
+            }
+
+            if (dto.valorRolo() != null && m2PorRolo != null && m2PorRolo > 0) {
+                insumo.setValorRolo(dto.valorRolo());
+                insumo.setValorUnitario(dto.valorRolo() / m2PorRolo);
+            } else if (dto.valorUnitario() != null) {
+                insumo.setValorUnitario(dto.valorUnitario());
+                if (m2PorRolo != null && m2PorRolo > 0) {
+                    insumo.setValorRolo(dto.valorUnitario() * m2PorRolo);
+                }
             }
         }
 
@@ -112,7 +121,7 @@ public class InsumoService {
                 throw new Exception("Nome deve ter no mínimo 3 caracteres.");
             }
 
-            if (!nomeTratado.matches("[\\p{L}0-9 ]+")) {
+            if (!nomeTratado.matches("[\\p{L}0-9 \\-.,()/&+']+")) {
                 throw new Exception("Nome contém caracteres inválidos.");
             }
 
@@ -152,6 +161,16 @@ public class InsumoService {
 
             if (m2PorRolo != null && insumo.getQuantidadeRolos() != null) {
                 insumo.setEstoqueAtual(m2PorRolo * insumo.getQuantidadeRolos());
+            }
+
+            if (dto.getValorRolo() != null && m2PorRolo != null && m2PorRolo > 0) {
+                insumo.setValorRolo(dto.getValorRolo());
+                insumo.setValorUnitario(dto.getValorRolo() / m2PorRolo);
+            } else if (dto.getValorUnitario() != null) {
+                insumo.setValorUnitario(dto.getValorUnitario());
+                if (m2PorRolo != null && m2PorRolo > 0) {
+                    insumo.setValorRolo(dto.getValorUnitario() * m2PorRolo);
+                }
             }
         }
 

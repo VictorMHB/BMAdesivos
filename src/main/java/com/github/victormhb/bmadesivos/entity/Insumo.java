@@ -37,6 +37,7 @@ public class Insumo {
     private Double comprimento;
     private Double metrosQuadrados;
     private Integer quantidadeRolos;
+    private Double valorRolo;
 
     //Tinta
     private String cor;
@@ -144,6 +145,14 @@ public class Insumo {
 
     public void setQuantidadeRolos(Integer quantidadeRolos) {
         this.quantidadeRolos = quantidadeRolos;
+    }
+
+    public Double getValorRolo() {
+        return valorRolo;
+    }
+
+    public void setValorRolo(Double valorRolo) {
+        this.valorRolo = valorRolo;
     }
 
     public String getCor() {

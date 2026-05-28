@@ -14,6 +14,7 @@ public record InsumoDTO(
         Double comprimento,
         Double metrosQuadrados,
         Integer quantidadeRolos,
+        Double valorRolo,
         // Tinta
         String cor,
         TamanhoEmbalagem tamanhoEmbalagem

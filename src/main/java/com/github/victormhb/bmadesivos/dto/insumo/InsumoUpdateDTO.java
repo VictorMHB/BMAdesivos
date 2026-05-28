@@ -13,6 +13,7 @@ public class InsumoUpdateDTO {
     private Double comprimento;
     private Double metrosQuadrados;
     private Integer quantidadeRolos;
+    private Double valorRolo;
     private String cor;
     private TamanhoEmbalagem tamanhoEmbalagem;
     private Boolean ativo;
@@ -49,6 +50,14 @@ public class InsumoUpdateDTO {
 
     public void setQuantidadeRolos(Integer quantidadeRolos) {
         this.quantidadeRolos = quantidadeRolos;
+    }
+
+    public Double getValorRolo() {
+        return valorRolo;
+    }
+
+    public void setValorRolo(Double valorRolo) {
+        this.valorRolo = valorRolo;
     }
 
     public String getCor() { return cor; }

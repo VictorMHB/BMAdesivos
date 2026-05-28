@@ -53,7 +53,7 @@ public class ClienteService {
             throw new Exception("Nome deve ter no mínimo 3 caracteres.");
         }
 
-        if (!nomeTratado.matches("[\\p{L}0-9 ]+")) {
+        if (!nomeTratado.matches("[\\p{L}0-9 \\-.,()/&+']+")) {
             throw new Exception("Nome contém caracteres inválidos.");
         }
 
@@ -91,7 +91,7 @@ public class ClienteService {
                 throw new Exception("Nome deve ter no mínimo 3 caracteres.");
             }
 
-            if (!nomeTratado.matches("[\\p{L}0-9 ]+")) {
+            if (!nomeTratado.matches("[\\p{L}0-9 \\-.,()/&+']+")) {
                 throw new Exception("Nome contém caracteres inválidos.");
             }
 
