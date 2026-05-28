@@ -169,12 +169,12 @@ public class InsumoService {
     }
 
     @Transactional
-    public void baixarEstoque(Long id, Double qtdConsumida) throws Exception {
+    public void baixarEstoque(Long id, Double qtdConsumida) {
         Insumo insumo = insumoRepository.findById(id)
-                .orElseThrow(() -> new Exception("Material não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Material não encontrado"));
 
         if (insumo.getEstoqueAtual() < qtdConsumida) {
-            throw new Exception("Estoque insuficiente de " + insumo.getNome());
+            throw new RuntimeException("Estoque insuficiente de " + insumo.getNome());
         }
 
         insumo.setEstoqueAtual(insumo.getEstoqueAtual() - qtdConsumida);

@@ -1,7 +1,7 @@
 package com.github.victormhb.bmadesivos.controller;
 
-import com.github.victormhb.bmadesivos.dto.OrdemProducaoDTO;
-import com.github.victormhb.bmadesivos.entity.OrdemProducao;
+import com.github.victormhb.bmadesivos.dto.ordem.OrdemProducaoDTO;
+import com.github.victormhb.bmadesivos.dto.ordem.OrdemResponseDTO;
 import com.github.victormhb.bmadesivos.service.OrdemProducaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/ordens")
-@CrossOrigin(origins = "http://localhost:5173",
-        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PATCH, RequestMethod.OPTIONS})
 public class OrdemProducaoController {
 
     private final OrdemProducaoService ordemProducaoService;
@@ -23,19 +21,25 @@ public class OrdemProducaoController {
     }
 
     @GetMapping("/todas")
-    public List<OrdemProducao> listar() {
-        return ordemProducaoService.listar();
+    public List<OrdemResponseDTO> listar() {
+        return ordemProducaoService.listar()
+                .stream()
+                .map(OrdemResponseDTO::de)
+                .toList();
     }
 
     @GetMapping("/historico")
-    public List<OrdemProducao> listarHistorico() {
-        return ordemProducaoService.listarHistorico();
+    public List<OrdemResponseDTO> listarHistorico() {
+        return ordemProducaoService.listarHistorico()
+                .stream()
+                .map(OrdemResponseDTO::de)
+                .toList();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(ordemProducaoService.buscarPorId(id));
+            return ResponseEntity.ok(OrdemResponseDTO.de(ordemProducaoService.buscarPorId(id)));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
@@ -44,7 +48,7 @@ public class OrdemProducaoController {
     @PostMapping("/nova")
     public ResponseEntity<?> abrir(@RequestBody OrdemProducaoDTO dto) {
         try {
-            return ResponseEntity.ok(ordemProducaoService.abrirOrdem(dto));
+            return ResponseEntity.ok(OrdemResponseDTO.de(ordemProducaoService.abrirOrdem(dto)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -53,7 +57,7 @@ public class OrdemProducaoController {
     @PatchMapping("/{id}/avancar")
     public ResponseEntity<?> avancar(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(ordemProducaoService.avancarStatus(id));
+            return ResponseEntity.ok(OrdemResponseDTO.de(ordemProducaoService.avancarStatus(id)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -62,7 +66,7 @@ public class OrdemProducaoController {
     @PatchMapping("/{id}/finalizar")
     public ResponseEntity<?> finalizar(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(ordemProducaoService.finalizarOrdem(id));
+            return ResponseEntity.ok(OrdemResponseDTO.de(ordemProducaoService.finalizarOrdem(id)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -71,7 +75,7 @@ public class OrdemProducaoController {
     @PatchMapping("/{id}/arquivar")
     public ResponseEntity<?> arquivar(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(ordemProducaoService.arquivarOrdem(id));
+            return ResponseEntity.ok(OrdemResponseDTO.de(ordemProducaoService.arquivarOrdem(id)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -80,7 +84,7 @@ public class OrdemProducaoController {
     @PatchMapping("/{id}/cancelar")
     public ResponseEntity<?> cancelar(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(ordemProducaoService.cancelarOrdem(id));
+            return ResponseEntity.ok(OrdemResponseDTO.de(ordemProducaoService.cancelarOrdem(id)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
