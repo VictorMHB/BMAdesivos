@@ -1,5 +1,6 @@
 package com.github.victormhb.bmadesivos.entity;
 
+import com.github.victormhb.bmadesivos.enums.TipoMovimentacao;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -16,8 +17,8 @@ public class MovimentacaoEstoque {
     private Insumo insumo;
 
     @ManyToOne
-    @JoinColumn(name = "produto_id")
-    private Adesivo produto;
+    @JoinColumn(name = "adesivo_id")
+    private Adesivo adesivo;
 
     @Column(nullable = false)
     private Double quantidade;
@@ -32,17 +33,6 @@ public class MovimentacaoEstoque {
     private LocalDateTime dataHora = LocalDateTime.now();
 
     private String observacao;
-
-    public enum TipoMovimentacao {
-        ENTRADA_INSUMO,
-        SAIDA_INSUMO,
-
-        ENTRADA_PRODUTO,
-        SAIDA_PRODUTO,
-
-        AJUSTE,
-        CANCELAMENTO
-    }
 
     public MovimentacaoEstoque() {}
 
@@ -62,12 +52,12 @@ public class MovimentacaoEstoque {
         this.insumo = insumo;
     }
 
-    public Adesivo getProduto() {
-        return produto;
+    public Adesivo getAdesivo() {
+        return adesivo;
     }
 
-    public void setProduto(Adesivo produto) {
-        this.produto = produto;
+    public void setAdesivo(Adesivo adesivo) {
+        this.adesivo = adesivo;
     }
 
     public Double getQuantidade() {

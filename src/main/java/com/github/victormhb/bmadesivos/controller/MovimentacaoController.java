@@ -1,5 +1,6 @@
 package com.github.victormhb.bmadesivos.controller;
 
+import com.github.victormhb.bmadesivos.dto.movimentacao.MovimentacaoDTO;
 import com.github.victormhb.bmadesivos.entity.MovimentacaoEstoque;
 import com.github.victormhb.bmadesivos.service.MovimentacaoService;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/movimentacoes")
-@CrossOrigin(origins = "http://localhost:5173")
 public class MovimentacaoController {
 
     private final MovimentacaoService movimentacaoService;
@@ -30,6 +30,16 @@ public class MovimentacaoController {
             return ResponseEntity.ok(movimentacaoEstoque);
         }  catch (Exception e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/ajuste")
+    public ResponseEntity<?> ajuste(@RequestBody MovimentacaoDTO dto) {
+        try {
+            movimentacaoService.realizarAjuste(dto);
+            return ResponseEntity.ok("Ajuste realizado com sucesso.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

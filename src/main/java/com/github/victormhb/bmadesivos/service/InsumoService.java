@@ -3,8 +3,11 @@ package com.github.victormhb.bmadesivos.service;
 import com.github.victormhb.bmadesivos.dto.insumo.InsumoDTO;
 import com.github.victormhb.bmadesivos.dto.insumo.InsumoUpdateDTO;
 import com.github.victormhb.bmadesivos.entity.Insumo;
+import com.github.victormhb.bmadesivos.entity.MovimentacaoEstoque;
 import com.github.victormhb.bmadesivos.enums.TipoInsumo;
+import com.github.victormhb.bmadesivos.enums.TipoMovimentacao;
 import com.github.victormhb.bmadesivos.repository.InsumoRepository;
+import com.github.victormhb.bmadesivos.repository.MovimentacaoEstoqueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -16,10 +19,12 @@ import java.util.List;
 public class InsumoService {
 
     private final InsumoRepository insumoRepository;
+    private final MovimentacaoEstoqueRepository movimentacaoRepository;
 
     @Autowired
-    public InsumoService(InsumoRepository insumoRepository) {
+    public InsumoService(InsumoRepository insumoRepository, MovimentacaoEstoqueRepository movimentacaoRepository) {
         this.insumoRepository = insumoRepository;
+        this.movimentacaoRepository = movimentacaoRepository;
     }
 
     public List<Insumo> listar() {
@@ -188,16 +193,23 @@ public class InsumoService {
     }
 
     @Transactional
-    public void baixarEstoque(Long id, Double qtdConsumida) {
+    public void baixarEstoque(Long id, Double qtdConsumida) throws Exception {
         Insumo insumo = insumoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Material não encontrado"));
+                .orElseThrow(() -> new Exception("Material não encontrado"));
 
-        if (insumo.getEstoqueAtual() < qtdConsumida) {
-            throw new RuntimeException("Estoque insuficiente de " + insumo.getNome());
-        }
+        if (insumo.getEstoqueAtual() < qtdConsumida)
+            throw new Exception("Estoque insuficiente de " + insumo.getNome());
 
         insumo.setEstoqueAtual(insumo.getEstoqueAtual() - qtdConsumida);
         insumoRepository.save(insumo);
+
+        MovimentacaoEstoque mov = new MovimentacaoEstoque();
+        mov.setInsumo(insumo);
+        mov.setQuantidade(qtdConsumida);
+        mov.setTipo(TipoMovimentacao.SAIDA_INSUMO);
+        mov.setValorUnitario(insumo.getValorUnitario() != null ? insumo.getValorUnitario() : 0.0);
+        mov.setObservacao("Baixa automática por ordem de produção");
+        movimentacaoRepository.save(mov);
     }
 
     @Transactional

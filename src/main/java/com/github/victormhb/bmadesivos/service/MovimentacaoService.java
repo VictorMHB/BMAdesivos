@@ -1,9 +1,10 @@
 package com.github.victormhb.bmadesivos.service;
 
-import com.github.victormhb.bmadesivos.dto.MovimentacaoDTO;
+import com.github.victormhb.bmadesivos.dto.movimentacao.MovimentacaoDTO;
 import com.github.victormhb.bmadesivos.entity.Insumo;
 import com.github.victormhb.bmadesivos.entity.MovimentacaoEstoque;
 import com.github.victormhb.bmadesivos.entity.Adesivo;
+import com.github.victormhb.bmadesivos.enums.TipoMovimentacao;
 import com.github.victormhb.bmadesivos.repository.MovimentacaoEstoqueRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -42,16 +43,23 @@ public class MovimentacaoService {
     public void realizarAjuste(MovimentacaoDTO dto) throws Exception {
         MovimentacaoEstoque movimentacaoEstoque = new MovimentacaoEstoque();
         movimentacaoEstoque.setQuantidade(dto.quantidade());
-        movimentacaoEstoque.setTipo(MovimentacaoEstoque.TipoMovimentacao.AJUSTE);
-        movimentacaoEstoque.setValorUnitario(dto.valorUnitario());
+        movimentacaoEstoque.setTipo(TipoMovimentacao.AJUSTE);
+        movimentacaoEstoque.setValorUnitario(dto.valorUnitario() != null ? dto.valorUnitario() : 0.0);
         movimentacaoEstoque.setObservacao(dto.observacao());
 
-        if (dto.materialId() != null) {
-            Insumo insumo = insumoService.buscarPorId(dto.materialId());
+        if (dto.insumoId() != null) {
+            Insumo insumo = insumoService.buscarPorId(dto.insumoId());
+
+            double novoEstoque = insumo.getEstoqueAtual() + dto.quantidade();
+            if (novoEstoque < 0)
+                throw new Exception("Ajuste resultaria em estoque negativo para " + insumo.getNome());
+
+            insumo.setEstoqueAtual(novoEstoque);
             movimentacaoEstoque.setInsumo(insumo);
-        } else if (dto.produtoId() != null) {
-            Adesivo produto = produtoService.buscarPorId(dto.produtoId());
-            movimentacaoEstoque.setProduto(produto);
+
+        } else if (dto.adesivoId() != null) {
+            Adesivo adesivo = produtoService.buscarPorId(dto.adesivoId());
+            movimentacaoEstoque.setAdesivo(adesivo);
         }
 
         movimentacaoRepository.save(movimentacaoEstoque);
