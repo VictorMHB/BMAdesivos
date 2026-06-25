@@ -1,5 +1,6 @@
 package com.github.victormhb.bmadesivos.service;
 
+import com.github.victormhb.bmadesivos.dto.insumo.EntradaInsumoDTO;
 import com.github.victormhb.bmadesivos.dto.insumo.InsumoDTO;
 import com.github.victormhb.bmadesivos.dto.insumo.InsumoUpdateDTO;
 import com.github.victormhb.bmadesivos.entity.Insumo;
@@ -129,6 +130,8 @@ public class InsumoService {
         Insumo insumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new Exception("Material com ID " + id + " não foi encontrado"));
 
+        double estoqueAntes = insumo.getEstoqueAtual();
+
         if (dto.getNome() != null && !dto.getNome().trim().isEmpty()) {
             String nomeTratado = dto.getNome().trim();
 
@@ -174,7 +177,12 @@ public class InsumoService {
                 insumo.setMetrosQuadrados(m2PorRolo);
             }
 
-            if (m2PorRolo != null && insumo.getQuantidadeRolos() != null) {
+            boolean editouRolosOuDimensoes = dto.getQuantidadeRolos() != null
+                    || dto.getLargura() != null
+                    || dto.getComprimento() != null
+                    || dto.getMetrosQuadrados() != null;
+
+            if (editouRolosOuDimensoes && m2PorRolo != null && insumo.getQuantidadeRolos() != null) {
                 insumo.setEstoqueAtual(m2PorRolo * insumo.getQuantidadeRolos());
             }
 
@@ -199,7 +207,22 @@ public class InsumoService {
             insumo.setAtivo(dto.getAtivo());
         }
 
-        return insumoRepository.save(insumo);
+        Insumo salvo = insumoRepository.save(insumo);
+
+        double diferenca = salvo.getEstoqueAtual() - estoqueAntes;
+        if (Math.abs(diferenca) > 0.01) {
+            MovimentacaoEstoque mov = new MovimentacaoEstoque();
+            mov.setInsumo(salvo);
+            mov.setQuantidade(Math.abs(diferenca));
+            mov.setValorUnitario(salvo.getValorUnitario() != null ? salvo.getValorUnitario() : 0.0);
+            mov.setTipo(TipoMovimentacao.AJUSTE);
+            mov.setObservacao(dto.getObservacaoAjuste() != null
+                    ? dto.getObservacaoAjuste().trim()
+                    : (diferenca > 0 ? "Ajuste manual: acréscimo de estoque" : "Ajuste manual: redução de estoque"));
+            movimentacaoRepository.save(mov);
+        }
+
+        return salvo;
     }
 
     @Transactional
@@ -229,5 +252,52 @@ public class InsumoService {
 
         insumo.setAtivo(false);
         insumoRepository.save(insumo);
+    }
+
+    @Transactional
+    public Insumo registrarEntrada(Long id, EntradaInsumoDTO dto) throws Exception {
+        Insumo insumo = insumoRepository.findById(id)
+                .orElseThrow(() -> new Exception("Material com ID " + id + " não foi encontrado"));
+
+        if (dto.quantidade() == null || dto.quantidade() <= 0) {
+            throw new Exception("A quantidade da entrada deve ser maior que zero.");
+        }
+
+        double quantidadeMovimentacao;
+
+        if (insumo.getTipoInsumo() == TipoInsumo.SUBSTRATO) {
+            if (insumo.getMetrosQuadrados() == null || insumo.getMetrosQuadrados() <= 0) {
+                throw new Exception("Insumo não possui m² por rolo cadastrado; informe largura e comprimento antes de registrar entrada.");
+            }
+
+            int rolosNovos = dto.quantidade().intValue();
+            double m2PorRolo = insumo.getMetrosQuadrados();
+            double m2Adicionados = m2PorRolo * rolosNovos;
+
+            int rolosAtuais = insumo.getQuantidadeRolos() != null ? insumo.getQuantidadeRolos() : 0;
+            insumo.setQuantidadeRolos(rolosAtuais + rolosNovos);
+            insumo.setEstoqueAtual(insumo.getEstoqueAtual() + m2Adicionados);
+
+            quantidadeMovimentacao = m2Adicionados;
+        } else {
+            insumo.setEstoqueAtual(insumo.getEstoqueAtual() + dto.quantidade());
+            quantidadeMovimentacao = dto.quantidade();
+        }
+
+        if (dto.valorUnitario() != null && dto.valorUnitario() > 0) {
+            insumo.setValorUnitario(dto.valorUnitario());
+        }
+
+        insumoRepository.save(insumo);
+
+        MovimentacaoEstoque mov = new MovimentacaoEstoque();
+        mov.setInsumo(insumo);
+        mov.setQuantidade(quantidadeMovimentacao);
+        mov.setValorUnitario(insumo.getValorUnitario() != null ? insumo.getValorUnitario() : 0.0);
+        mov.setTipo(TipoMovimentacao.ENTRADA_INSUMO);
+        mov.setObservacao("Entrada de estoque (compra)");
+        movimentacaoRepository.save(mov);
+
+        return insumo;
     }
 }

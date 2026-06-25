@@ -17,6 +17,7 @@ public class InsumoUpdateDTO {
     private String cor;
     private TamanhoEmbalagem tamanhoEmbalagem;
     private Boolean ativo;
+    private String observacaoAjuste;
 
     public InsumoUpdateDTO() {}
 
@@ -68,4 +69,7 @@ public class InsumoUpdateDTO {
 
     public Boolean getAtivo() { return ativo; }
     public void setAtivo(Boolean ativo) { this.ativo = ativo; }
+
+    public String getObservacaoAjuste() { return observacaoAjuste; }
+    public void setObservacaoAjuste(String observacaoAjuste) { this.observacaoAjuste = observacaoAjuste; }
 }

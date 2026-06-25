@@ -1,5 +1,6 @@
 package com.github.victormhb.bmadesivos.controller;
 
+import com.github.victormhb.bmadesivos.dto.insumo.EntradaInsumoDTO;
 import com.github.victormhb.bmadesivos.dto.insumo.InsumoDTO;
 import com.github.victormhb.bmadesivos.dto.insumo.InsumoUpdateDTO;
 import com.github.victormhb.bmadesivos.entity.Insumo;
@@ -49,6 +50,15 @@ public class InsumoController {
     public ResponseEntity<?> atualizarInsumo(@PathVariable Long id, @RequestBody InsumoUpdateDTO dto) {
         try {
             return ResponseEntity.ok(insumoService.atualizarInsumo(id, dto));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{id}/entrada")
+    public ResponseEntity<?> registrarEntrada(@PathVariable Long id, @RequestBody EntradaInsumoDTO dto) {
+        try {
+            return ResponseEntity.ok(insumoService.registrarEntrada(id, dto));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
