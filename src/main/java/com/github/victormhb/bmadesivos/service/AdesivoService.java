@@ -76,7 +76,7 @@ public class AdesivoService {
             throw new Exception("O cliente é obrigatório.");
         }
 
-        if (dto.substratoId() == null) {
+        if (dto.tipoAdesivo() != TipoAdesivo.ETIQUETA_METALICA && dto.substratoId() == null) {
             throw new Exception("O substrato é obrigatório.");
         }
 

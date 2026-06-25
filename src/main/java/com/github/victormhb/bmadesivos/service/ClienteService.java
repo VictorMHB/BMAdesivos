@@ -8,6 +8,7 @@ import com.github.victormhb.bmadesivos.dto.cliente.ClienteDTO;
 import com.github.victormhb.bmadesivos.dto.cliente.ClienteUpdateDTO;
 import com.github.victormhb.bmadesivos.entity.Cliente;
 import com.github.victormhb.bmadesivos.entity.Endereco;
+import com.github.victormhb.bmadesivos.entity.Funcionario;
 import com.github.victormhb.bmadesivos.repository.ClienteRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;

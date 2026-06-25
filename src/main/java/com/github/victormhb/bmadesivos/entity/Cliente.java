@@ -24,6 +24,10 @@ public class Cliente {
     @JoinColumn(name = "endereco_id", referencedColumnName = "id")
     private Endereco endereco;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_id_funcionario")
+    private Funcionario funcionarioResponsavel;
+
     @Column(name = "ativo")
     private boolean ativo = true;
 
@@ -86,6 +90,10 @@ public class Cliente {
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
     }
+
+    public Funcionario getFuncionarioResponsavel() { return funcionarioResponsavel; }
+
+    public void setFuncionarioResponsavel(Funcionario funcionarioResponsavel) { this.funcionarioResponsavel = funcionarioResponsavel; }
 
     public boolean isAtivo() {
         return ativo;

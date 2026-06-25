@@ -60,6 +60,11 @@ public class InsumoService {
             throw new Exception("Estoque atual inválido.");
         }
 
+        if ((dto.tipoInsumo() == TipoInsumo.TINTA || dto.tipoInsumo() == TipoInsumo.RESINA)
+                && (dto.valorUnitario() == null || dto.valorUnitario() < 0)) {
+            throw new Exception("O valor unitário é obrigatório para " + dto.tipoInsumo().name().toLowerCase() + ".");
+        }
+
         Insumo insumo = new Insumo();
         insumo.setNome(nomeTratado);
         insumo.setDescricao(dto.descricao() != null ? dto.descricao().trim() : null);
@@ -96,6 +101,11 @@ public class InsumoService {
                 if (m2PorRolo != null && m2PorRolo > 0) {
                     insumo.setValorRolo(dto.valorUnitario() * m2PorRolo);
                 }
+            }
+        } else {
+            // Tinta e Resina
+            if (dto.valorUnitario() != null) {
+                insumo.setValorUnitario(dto.valorUnitario());
             }
         }
 
