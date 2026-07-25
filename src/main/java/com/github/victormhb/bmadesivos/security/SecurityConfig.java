@@ -85,6 +85,7 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
+                "http://localhost:3000",
                 "https://bm-adesivos-frontend.vercel.app"
         ));
 

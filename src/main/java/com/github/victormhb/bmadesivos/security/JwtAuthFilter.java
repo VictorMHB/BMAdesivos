@@ -58,8 +58,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 if (jwtUtil.validateToken(jwt, userDetails)) {
                     if (userDetails instanceof Funcionario funcionario) {
                         String path = request.getRequestURI();
+                        String method = request.getMethod();
 
-                        if (funcionario.isTrocarSenha() && !path.contains("/alterar-senha")) {
+                        boolean rotaLiberada =
+                                (path.matches("/funcionarios/\\d+/alterar-senha") && method.equals("PATCH")) ||
+                                        (path.matches("/funcionarios/\\d+") && method.equals("GET"));
+
+                        if (funcionario.isTrocarSenha() && !rotaLiberada) {
                             escreverErroJson(response, HttpServletResponse.SC_FORBIDDEN,
                                     "Alteração de senha necessária antes de continuar.");
                             return;
