@@ -1,4 +1,4 @@
-package com.github.victormhb.bmadesivos.dto.auth;
+package com.github.victormhb.bmadesivos.dto.auth.login;
 
 public class LoginRequest {
     private String email;

@@ -7,9 +7,11 @@ import com.github.victormhb.bmadesivos.dto.funcionario.FuncionarioUpdateDTO;
 import com.github.victormhb.bmadesivos.dto.funcionario.SenhaUpdateDTO;
 import com.github.victormhb.bmadesivos.entity.Funcionario;
 import com.github.victormhb.bmadesivos.repository.FuncionarioRepository;
+import com.github.victormhb.bmadesivos.event.FuncionarioCriadoEvent;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
 import org.passay.PasswordGenerator;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,13 +25,12 @@ public class FuncionarioService {
     private final FuncionarioRepository  funcionarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final CPFValidator validarCpf = new CPFValidator();
+    private final ApplicationEventPublisher eventPublisher;
 
-    private final EmailService emailService;
-
-    public FuncionarioService(FuncionarioRepository funcionarioRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
+    public FuncionarioService(FuncionarioRepository funcionarioRepository, PasswordEncoder passwordEncoder, ApplicationEventPublisher eventPublisher) {
         this.funcionarioRepository = funcionarioRepository;
         this.passwordEncoder =  passwordEncoder;
-        this.emailService = emailService;
+        this.eventPublisher = eventPublisher;
     }
 
     public List<Funcionario> listar() {
@@ -85,11 +86,9 @@ public class FuncionarioService {
 
         funcionarioRepository.save(funcionario);
 
-        try {
-            emailService.enviarSenhaTemporaria(funcionario.getEmail(), funcionario.getNome(), senhaTemp);
-        } catch (Exception e) {
-            System.out.println("[WARN] Funcionário criado, mas email não enviado: " + e.getMessage());
-        }
+        eventPublisher.publishEvent(
+                new FuncionarioCriadoEvent(funcionario.getEmail(), funcionario.getNome(), senhaTemp)
+        );
 
         return senhaTemp;
     }
@@ -165,7 +164,7 @@ public class FuncionarioService {
         CharacterRule upperCase = new CharacterRule(EnglishCharacterData.UpperCase, 1);
         CharacterRule digit = new CharacterRule(EnglishCharacterData.Digit, 1);
 
-        return passwordGenerator.generatePassword(8, lowerCase, upperCase, digit);
+        return passwordGenerator.generatePassword(12, lowerCase, upperCase, digit);
     }
 
     private void validarCpf(String cpf) throws Exception {

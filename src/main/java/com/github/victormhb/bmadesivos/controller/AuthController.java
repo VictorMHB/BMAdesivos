@@ -1,12 +1,16 @@
 package com.github.victormhb.bmadesivos.controller;
 
-import com.github.victormhb.bmadesivos.dto.auth.LoginRequest;
-import com.github.victormhb.bmadesivos.dto.auth.LoginResponse;
+import com.github.victormhb.bmadesivos.dto.auth.login.LoginRequest;
+import com.github.victormhb.bmadesivos.dto.auth.login.LoginResponse;
 import com.github.victormhb.bmadesivos.dto.auth.RegisterRequest;
+import com.github.victormhb.bmadesivos.dto.auth.senha.RecuperarSenhaDTO;
+import com.github.victormhb.bmadesivos.dto.auth.senha.RedefinirSenhaDTO;
 import com.github.victormhb.bmadesivos.entity.Funcionario;
 import com.github.victormhb.bmadesivos.repository.FuncionarioRepository;
+import com.github.victormhb.bmadesivos.repository.RecuperacaoSenhaRepository;
 import com.github.victormhb.bmadesivos.security.AutenticacaoService;
 import com.github.victormhb.bmadesivos.security.JwtUtil;
+import com.github.victormhb.bmadesivos.service.RecuperacaoSenhaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,13 +27,17 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final AutenticacaoService autenticacaoService;
+    private final RecuperacaoSenhaRepository recuperacaoSenhaRepository;
+    private final RecuperacaoSenhaService recuperacaoSenhaService;
 
-    public AuthController(AuthenticationManager authenticationManager, FuncionarioRepository funcionarioRepository, JwtUtil jwtUtil, PasswordEncoder passwordEncoder, AutenticacaoService autenticacaoService) {
+    public AuthController(AuthenticationManager authenticationManager, FuncionarioRepository funcionarioRepository, RecuperacaoSenhaRepository recuperacaoRepository, JwtUtil jwtUtil, PasswordEncoder passwordEncoder, AutenticacaoService autenticacaoService, RecuperacaoSenhaService recuperacaoSenhaService) {
         this.authenticationManager = authenticationManager;
         this.funcionarioRepository = funcionarioRepository;
+        this.recuperacaoSenhaRepository = recuperacaoRepository;
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
         this.autenticacaoService = autenticacaoService;
+        this.recuperacaoSenhaService = recuperacaoSenhaService;
     }
 
     @PostMapping("/login")
@@ -87,5 +95,20 @@ public class AuthController {
         funcionarioRepository.save(novoFunc);
 
         return ResponseEntity.ok("Funcionário cadastrado com sucesso!");
+    }
+
+    @PostMapping("/recuperar-senha")
+    public ResponseEntity<?> recuperarSenha(@RequestBody RecuperarSenhaDTO dto) {
+        recuperacaoSenhaService.solicitarRecuperacao(dto.email());
+        return  ResponseEntity.ok("Se o email existir em nosso sistema, enviaremos um link de recuperação.");
+    }
+
+    public ResponseEntity<?> redefinirSenha(@RequestBody RedefinirSenhaDTO dto) {
+        try {
+            recuperacaoSenhaService.redefinirSenha(dto.token(), dto.novaSenha());
+            return ResponseEntity.ok("Senha redefinida com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
