@@ -103,6 +103,7 @@ public class AuthController {
         return  ResponseEntity.ok("Se o email existir em nosso sistema, enviaremos um link de recuperação.");
     }
 
+    @PostMapping("/redefinir-senha")
     public ResponseEntity<?> redefinirSenha(@RequestBody RedefinirSenhaDTO dto) {
         try {
             recuperacaoSenhaService.redefinirSenha(dto.token(), dto.novaSenha());

@@ -4,6 +4,7 @@ import com.github.victormhb.bmadesivos.entity.Funcionario;
 import com.github.victormhb.bmadesivos.event.FuncionarioCriadoEvent;
 import com.github.victormhb.bmadesivos.event.RecuperacaoSenhaEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -14,6 +15,9 @@ import org.springframework.stereotype.Service;
 public class EmailService {
 
     private final JavaMailSender mailSender;
+
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
 
     @Autowired
     public EmailService(JavaMailSender mailSender) {
@@ -34,7 +38,7 @@ public class EmailService {
     @EventListener
     public void aoRecuperacaoSenha(RecuperacaoSenhaEvent event) {
         try {
-            enviarSenhaTemporaria(event.getEmail(), event.getNome(), event.getToken());
+            enviarLinkRecuperacao(event.getEmail(), event.getNome(), event.getToken());
         } catch (Exception e) {
             System.out.println("[WARN] Token gerado, mas email não enviado: " + e.getMessage());
         }
@@ -56,7 +60,7 @@ public class EmailService {
     }
 
     public void enviarLinkRecuperacao(String destinatario, String nomeFuncionario, String tokenBruto) {
-        String link = "https://seusite.com/redefinir-senha?token=" + tokenBruto;
+        String link = frontendUrl + "/redefinir-senha?token=" + tokenBruto;
 
         SimpleMailMessage mensagem = new SimpleMailMessage();
         mensagem.setTo(destinatario);
