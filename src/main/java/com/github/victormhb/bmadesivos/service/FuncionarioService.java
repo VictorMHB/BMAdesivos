@@ -111,8 +111,16 @@ public class FuncionarioService {
             funcionario.setNome(nomeTratado);
         }
 
-        if (dto.getEmail() != null) {
-            funcionario.setEmail(dto.getEmail().trim());
+        if (dto.getEmail() != null && !dto.getEmail().trim().isEmpty()) {
+            String emailTratado = dto.getEmail().trim();
+
+            funcionarioRepository.findByEmail(emailTratado).ifPresent(existente -> {
+                if (!existente.getId().equals(id)) {
+                    throw new RuntimeException("Este email já está em uso por outro funcionário.");
+                }
+            });
+
+            funcionario.setEmail(emailTratado);
         }
 
         if (dto.getCpf() != null && !dto.getCpf().trim().isEmpty()) {
@@ -122,6 +130,10 @@ public class FuncionarioService {
 
         if (dto.getTelefone() != null) {
             funcionario.setTelefone(dto.getTelefone().trim());
+        }
+
+        if (dto.getCargo() != null) {
+            funcionario.setCargo(dto.getCargo());
         }
 
         if (dto.getAtivo() != null) {

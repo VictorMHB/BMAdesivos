@@ -1,27 +1,29 @@
 package com.github.victormhb.bmadesivos.service;
 
-import com.github.victormhb.bmadesivos.entity.Funcionario;
 import com.github.victormhb.bmadesivos.event.FuncionarioCriadoEvent;
 import com.github.victormhb.bmadesivos.event.RecuperacaoSenhaEvent;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 @Service
 public class EmailService {
 
     private final JavaMailSender mailSender;
+    private final TemplateEngine templateEngine;
 
     @Value("${app.frontend-url}")
     private String frontendUrl;
 
-    @Autowired
-    public EmailService(JavaMailSender mailSender) {
+    public EmailService(JavaMailSender mailSender,  TemplateEngine templateEngine) {
         this.mailSender = mailSender;
+        this.templateEngine = templateEngine;
     }
 
     @Async
@@ -44,35 +46,36 @@ public class EmailService {
         }
     }
 
-    public void enviarSenhaTemporaria(String destinatario, String nomeFuncionario, String senhaTemporaria) {
-        SimpleMailMessage mensagem = new SimpleMailMessage();
-        mensagem.setTo(destinatario);
-        mensagem.setSubject("BM Adesivos — Seu acesso foi criado");
-        mensagem.setText(
-                "Olá, " + nomeFuncionario + "!\n\n" +
-                        "Seu cadastro no sistema BM Adesivos foi realizado com sucesso.\n\n" +
-                        "Sua senha temporária é: " + senhaTemporaria + "\n\n" +
-                        "Por segurança, você será solicitado a trocar sua senha no primeiro acesso.\n\n" +
-                        "Atenciosamente,\n" +
-                        "Equipe BM Adesivos"
-        );
-        mailSender.send(mensagem);
+    public void enviarSenhaTemporaria(String destinatario, String nomeFuncionario, String senhaTemporaria) throws Exception {
+        Context context = new Context();
+        context.setVariable("nome", nomeFuncionario);
+        context.setVariable("senhaTemp", senhaTemporaria);
+
+        String html = templateEngine.process("email/senha-temporaria", context);
+
+        enviarHtml(destinatario, "BM Adesivos — Seu acesso foi criado", html);
     }
 
-    public void enviarLinkRecuperacao(String destinatario, String nomeFuncionario, String tokenBruto) {
+    public void enviarLinkRecuperacao(String destinatario, String nomeFuncionario, String tokenBruto) throws Exception {
         String link = frontendUrl + "/redefinir-senha?token=" + tokenBruto;
 
-        SimpleMailMessage mensagem = new SimpleMailMessage();
-        mensagem.setTo(destinatario);
-        mensagem.setSubject("BM Adesivos - Recuperação de senha");
-        mensagem.setText(
-                "Olá, " + nomeFuncionario + "!\n\n" +
-                        "Recebemos uma solicitação para redefinir sua senha.\n\n" +
-                        "Clique no link abaixo para criar uma nova senha:\n" + link + "\n\n" +
-                        "Este link expira em 30 minutos. Se você não solicitou isso, ignore este email.\n\n" +
-                        "Atenciosamente,\n" +
-                        "Equipe BM Adesivos"
-        );
-        mailSender.send(mensagem);
+        Context context = new Context();
+        context.setVariable("nome", nomeFuncionario);
+        context.setVariable("link", link);
+
+        String html = templateEngine.process("email/recuperacao-senha", context);
+
+        enviarHtml(destinatario, "BM Adesivos - Recuperação de senha", html);
+    }
+
+    private void enviarHtml(String destinatario, String assunto, String html) throws Exception {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
+
+        helper.setTo(destinatario);
+        helper.setSubject(assunto);
+        helper.setText(html, true);
+
+        mailSender.send(mimeMessage);
     }
 }

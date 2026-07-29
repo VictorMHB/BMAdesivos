@@ -1,11 +1,14 @@
 package com.github.victormhb.bmadesivos.dto.funcionario;
 
+import com.github.victormhb.bmadesivos.enums.Cargo;
+
 public class FuncionarioUpdateDTO {
 
     private String nome;
     private String cpf;
     private String email;
     private String telefone;
+    private Cargo cargo;
     private Boolean ativo;
 
     public FuncionarioUpdateDTO() {
@@ -41,6 +44,14 @@ public class FuncionarioUpdateDTO {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public Cargo getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(Cargo cargo) {
+        this.cargo = cargo;
     }
 
     public Boolean getAtivo() {
