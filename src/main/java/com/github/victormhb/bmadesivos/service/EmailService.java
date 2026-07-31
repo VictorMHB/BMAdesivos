@@ -51,7 +51,7 @@ public class EmailService {
         context.setVariable("nome", nomeFuncionario);
         context.setVariable("senhaTemp", senhaTemporaria);
 
-        String html = templateEngine.process("email/senha-temporaria", context);
+        String html = templateEngine.process("senha-temporaria", context);
 
         enviarHtml(destinatario, "BM Adesivos — Seu acesso foi criado", html);
     }
@@ -63,7 +63,7 @@ public class EmailService {
         context.setVariable("nome", nomeFuncionario);
         context.setVariable("link", link);
 
-        String html = templateEngine.process("email/recuperacao-senha", context);
+        String html = templateEngine.process("recuperacao-senha", context);
 
         enviarHtml(destinatario, "BM Adesivos - Recuperação de senha", html);
     }
