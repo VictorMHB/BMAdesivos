@@ -78,7 +78,11 @@ public class OrdemProducaoService {
         ordem.setCliente(cliente);
         ordem.setStatus(StatusOrdem.PENDENTE);
         ordem.setDataAbertura(LocalDateTime.now());
+        ordem.setDataPrazo(dto.dataPrazo());
         ordem.setAtivo(true);
+
+        if (dto.dataPrazo() != null && dto.dataPrazo().isBefore(LocalDateTime.now()))
+            throw new Exception("O prazo não pode ser uma data no passado.");
 
         for (ItemOrdemDTO itemDTO : dto.itens()) {
             if (itemDTO.quantidade() == null || itemDTO.quantidade() <= 0)

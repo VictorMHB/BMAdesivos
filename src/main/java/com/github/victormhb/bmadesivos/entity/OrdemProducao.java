@@ -33,6 +33,7 @@ public class OrdemProducao {
     private boolean arquivada = false;
 
     private LocalDateTime dataAbertura = LocalDateTime.now();
+    private LocalDateTime dataPrazo;
     private LocalDateTime dataConclusao;
 
     @Column(nullable = false)
@@ -54,6 +55,15 @@ public class OrdemProducao {
     public void setArquivada(boolean arquivada) { this.arquivada = arquivada; }
     public LocalDateTime getDataAbertura() { return dataAbertura; }
     public void setDataAbertura(LocalDateTime dataAbertura) { this.dataAbertura = dataAbertura; }
+
+    public LocalDateTime getDataPrazo() {
+        return dataPrazo;
+    }
+
+    public void setDataPrazo(LocalDateTime dataPrazo) {
+        this.dataPrazo = dataPrazo;
+    }
+
     public LocalDateTime getDataConclusao() { return dataConclusao; }
     public void setDataConclusao(LocalDateTime dataConclusao) { this.dataConclusao = dataConclusao; }
     public boolean isAtivo() { return ativo; }

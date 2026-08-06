@@ -15,6 +15,7 @@ public record OrdemResponseDTO(
         StatusOrdem status,
         boolean arquivada,
         LocalDateTime dataAbertura,
+        LocalDateTime dataPrazo,
         LocalDateTime dataConclusao
 ) {
     public record ItemOrdemResponseDTO(
@@ -49,6 +50,7 @@ public record OrdemResponseDTO(
                 o.getStatus(),
                 o.isArquivada(),
                 o.getDataAbertura(),
+                o.getDataPrazo(),
                 o.getDataConclusao()
         );
     }
